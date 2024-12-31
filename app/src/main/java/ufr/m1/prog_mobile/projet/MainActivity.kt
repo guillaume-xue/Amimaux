@@ -4,13 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,28 +27,47 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProjetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    MonMenu(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
     }
 }
 
+@Preview
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun MonMenu(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+        ListAnimal()
+
+        Row (
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Button(
+                modifier = Modifier.padding(8.dp),
+                onClick = {}
+            ) { Text("Ajouter") }
+            Button(
+                modifier = Modifier.padding(8.dp),
+                onClick = {}
+            ) { Text("Supprimer") }
+
+        }
+    }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun GreetingPreview() {
-    ProjetTheme {
-        Greeting("Android")
-    }
+fun ListAnimal() {
+    LazyColumn (
+        modifier = Modifier.padding(16.dp)
+    ) { items(5) { index ->
+        Text("Item $index")
+    } }
 }
