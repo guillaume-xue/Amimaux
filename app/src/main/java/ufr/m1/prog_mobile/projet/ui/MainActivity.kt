@@ -36,9 +36,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ufr.m1.prog_mobile.projet.R
 import ufr.m1.prog_mobile.projet.data.Animal
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
 
@@ -63,24 +63,18 @@ fun MonMenu(modifier: Modifier = Modifier, model: MyViewModel = viewModel(), con
 
     Column(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(Color(0xFFE0E0E0)),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SpaceBox(modifier = Modifier.weight(1f))
+        Box(
+            modifier = modifier.padding(100.dp)
+        )
         ImageScrollView(modifier = Modifier.weight(1f), animaux, onRemplirAnimals = model::remplirAnimaux)
         MyButton(modifier = Modifier.align(Alignment.End), onClearAnimal = model::clearDatabase)
     }
 
-}
-
-@Composable
-fun SpaceBox(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .padding(16.dp)
-    )
 }
 
 @Composable
@@ -134,7 +128,6 @@ fun ImageScrollView(modifier: Modifier = Modifier, animaux: List<Animal>, onRemp
     Row(
         modifier = modifier
             .horizontalScroll(scrollState)
-            .fillMaxSize()
             .padding(16.dp)
     ) {
         for (animal in animaux){
@@ -151,7 +144,15 @@ fun ImageScrollView(modifier: Modifier = Modifier, animaux: List<Animal>, onRemp
                             .background(Color.White)
                     )
                 } else {
-                    Text(text = "Image not found for ${animal.nom}")
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        contentDescription = animal.nom,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(300.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color.White)
+                    )
                 }
             }
         }
