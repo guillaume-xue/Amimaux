@@ -20,4 +20,7 @@ interface MyDao {
 
     @Query("SELECT * FROM Animal WHERE nom LIKE :pref || '%'")
     fun getAnimalsPref(pref: String): Flow<List<Animal>>
+
+    @Query("DELETE FROM Animal")
+    suspend fun clearAllAnimals()
 }

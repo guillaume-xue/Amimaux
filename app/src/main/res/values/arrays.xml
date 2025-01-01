@@ -2,66 +2,12 @@
 <resources>
 
     <string-array name="animals">
+        <item>Mimi</item>
         <item>Chat</item>
-        <item>Cat</item>
-        <item>cat.png</item>
-        <item>Chien</item>
-        <item>Dog</item>
-        <item>dog.png</item>
-        <item>Canard</item>
-        <item>Duck</item>
-        <item>duck.png</item>
-        <item>Elephant</item>
-        <item>Elephant</item>
-        <item>elephant.png</item>
-        <item>Girafe</item>
-        <item>Giraffe</item>
-        <item>giraffe.png</item>
-        <item>Lion</item>
-        <item>Lion</item>
-        <item>Lion.png</item>
-        <item>Ours</item>
-        <item>Bear</item>
-        <item>bear.png</item>
-        <item>Panda</item>
-        <item>Panda</item>
-        <item>panda.png</item>
-        <item>Pingouin</item>
-        <item>Penguin</item>
-        <item>penguin.png</item>
-        <item>Singe</item>
-        <item>Monkey</item>
-        <item>monkey.png</item>
-        <item>Tigre</item>
-        <item>Tiger</item>
-        <item>tiger.png</item>
-        <item>Renard</item>
-        <item>Fox</item>
-        <item>fox.png</item>
-        <item>Chameau</item>
-        <item>Camel</item>
-        <item>camel.png</item>
-        <item>Chouette</item>
-        <item>Owl</item>
-        <item>owl.png</item>
-        <item>Crocodile</item>
-        <item>Crocodile</item>
-        <item>crocodile.png</item>
-        <item>Dauphin</item>
-        <item>Dolphin</item>
-        <item>dolphin.png</item>
-        <item>Escargot</item>
-        <item>Snail</item>
-        <item>snail.png</item>
-        <item>Fourmi</item>
-        <item>Ant</item>
-        <item>ant.png</item>
-        <item>Grenouille</item>
-        <item>Frog</item>
-        <item>frog.png</item>
-        <item>Hibou</item>
-        <item>Owl</item>
-        <item>owl.png</item>
+        <item>chat_0</item>
+        <item>Lili</item>
+        <item>Chat</item>
+        <item>chat_1</item>
     </string-array>
 
 </resources>

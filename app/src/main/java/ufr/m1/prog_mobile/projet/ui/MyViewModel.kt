@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ufr.m1.prog_mobile.projet.R
 import ufr.m1.prog_mobile.projet.data.Animal
 import ufr.m1.prog_mobile.projet.data.AnimalBD
@@ -14,17 +15,20 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
 
     private val dao by lazy { AnimalBD.getDB(application).MyDao() }
     private val list = application.resources.getStringArray(R.array.animals)
-    var erreurIns= mutableStateOf(false)
+    private var erreurIns= mutableStateOf(false)
 
-    fun addAnimal(nom : String, espece : String, photo : String?) {
+    fun addAnimal(nom: String, espece: String, photo: String?) {
         viewModelScope.launch(Dispatchers.IO) {
-            if(-1L == dao.insertAnimal(Animal(nom = nom, espece = espece, photo = photo))) {
-                erreurIns.value=true
+            val result = dao.insertAnimal(Animal(nom = nom, espece = espece, photo = photo))
+            if (result == -1L) {
+                withContext(Dispatchers.Main) {
+                    erreurIns.value = true
+                }
             }
         }
     }
 
-    val prefix = mutableStateOf("")
+    private val prefix = mutableStateOf("")
     var animals = dao.getAnimalsPref(prefix.value)
 
     fun remplirAnimaux() {
@@ -33,6 +37,11 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun clearDatabase() {
+        viewModelScope.launch {
+            dao.clearAllAnimals()
+        }
+    }
 
 
 }
