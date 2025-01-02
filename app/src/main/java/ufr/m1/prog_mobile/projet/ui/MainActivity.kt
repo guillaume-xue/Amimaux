@@ -1,11 +1,15 @@
 package ufr.m1.prog_mobile.projet.ui
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -38,11 +42,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ufr.m1.prog_mobile.projet.R
+import coil.compose.rememberImagePainter
 import ufr.m1.prog_mobile.projet.data.Animal
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -130,12 +135,11 @@ fun ImageScrollView(modifier: Modifier = Modifier, animaux: List<Animal>, onRemp
             .horizontalScroll(scrollState)
             .padding(16.dp)
     ) {
-        for (animal in animaux){
+        for (animal in animaux) {
             animal.photo?.let { photo ->
-                val imageResId = context.resources.getIdentifier(photo, "drawable", context.packageName)
-                if (imageResId != 0) {
+                if (photo == "chat_0" || photo == "chat_1") {
                     Image(
-                        painter = painterResource(id = imageResId),
+                        painter = painterResource(id = context.resources.getIdentifier(photo, "drawable", context.packageName)),
                         contentDescription = animal.nom,
                         modifier = Modifier
                             .padding(8.dp)
@@ -144,8 +148,9 @@ fun ImageScrollView(modifier: Modifier = Modifier, animaux: List<Animal>, onRemp
                             .background(Color.White)
                     )
                 } else {
+                    val uri = Uri.parse(photo)
                     Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        painter = rememberImagePainter(data = uri),
                         contentDescription = animal.nom,
                         modifier = Modifier
                             .padding(8.dp)

@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ufr.m1.prog_mobile.projet.R
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
 import coil.compose.rememberImagePainter
@@ -84,7 +85,7 @@ fun MonAjout(modifier: Modifier){
 }
 
 @Composable
-fun MonAjoutPreview() {
+fun MonAjoutPreview(model: MyViewModel = viewModel()) {
 
     Column (
         modifier = Modifier
@@ -94,15 +95,16 @@ fun MonAjoutPreview() {
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         BackButtun()
-        EntreText()
+        EntreText(onAddAnimal = model::addAnimal)
         Box (
             modifier = Modifier.padding(8.dp)
         )
     }
 }
 
+
 @Composable
-fun EntreText(onAddAnimal : (nom: String, espece: String, photo: String?) -> Unit = { nom, espece, photo -> }){
+fun EntreText(onAddAnimal: (String, String, String?) -> Unit){
     val context = LocalContext.current
     var nom by remember { mutableStateOf("") }
     var espece by remember { mutableStateOf("") }
@@ -161,7 +163,7 @@ fun EntreText(onAddAnimal : (nom: String, espece: String, photo: String?) -> Uni
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    onAddAnimal(nom, espece, activity.selectedImageUri?.toString())
+                    onAddAnimal(nom, espece, activity.selectedImageUri.toString())
                 }
             },
             modifier = Modifier
