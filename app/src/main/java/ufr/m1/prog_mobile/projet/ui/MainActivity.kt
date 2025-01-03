@@ -1,17 +1,14 @@
 package ufr.m1.prog_mobile.projet.ui
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,7 +27,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -54,7 +50,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProjetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MonMenu(modifier = Modifier.padding(innerPadding), context = this)
+                    MonMenu(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -62,7 +58,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MonMenu(modifier: Modifier = Modifier, model: MyViewModel = viewModel(), context: Context) {
+fun MonMenu(modifier: Modifier = Modifier, model: MyViewModel = viewModel()) {
 
     val animaux by model.animals.collectAsState(listOf())
 
@@ -137,15 +133,19 @@ fun ImageScrollView(modifier: Modifier = Modifier, animaux: List<Animal>, onRemp
     ) {
         for (animal in animaux) {
             animal.photo?.let { photo ->
-                if (photo == "chat_0" || photo == "chat_1") {
+                if (photo == "chat" || photo == "chien" || photo == "hamster" || photo == "poisson") {
                     Image(
                         painter = painterResource(id = context.resources.getIdentifier(photo, "drawable", context.packageName)),
                         contentDescription = animal.nom,
                         modifier = Modifier
-                            .padding(8.dp)
+                            .padding(16.dp)
                             .size(300.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color.White)
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable {
+                                val iii = Intent(context, AnimalInfoActivity::class.java)
+                                iii.putExtra("animal", animal.nom)
+                                context.startActivity(iii)
+                            }
                     )
                 } else {
                     val uri = Uri.parse(photo)
@@ -153,10 +153,12 @@ fun ImageScrollView(modifier: Modifier = Modifier, animaux: List<Animal>, onRemp
                         painter = rememberImagePainter(data = uri),
                         contentDescription = animal.nom,
                         modifier = Modifier
-                            .padding(8.dp)
+                            .padding(16.dp)
                             .size(300.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color.White)
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable {
+
+                            }
                     )
                 }
             }
