@@ -3,16 +3,16 @@
 
     <string-array name="animals">
         <item>cat</item>
-        <item>Chat</item>
+        <item>chat</item>
         <item>chat</item>
         <item>dog</item>
-        <item>Chien</item>
+        <item>chien</item>
         <item>chien</item>
         <item>hamster</item>
-        <item>Hamster</item>
+        <item>hamster</item>
         <item>hamster</item>
         <item>fish</item>
-        <item>Poisson</item>
+        <item>poisson</item>
         <item>poisson</item>
     </string-array>
 

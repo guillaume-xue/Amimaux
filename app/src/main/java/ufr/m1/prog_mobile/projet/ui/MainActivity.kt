@@ -43,14 +43,15 @@ import ufr.m1.prog_mobile.projet.data.Animal
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ProjetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MonMenu(modifier = Modifier.padding(innerPadding))
+
+                    val model = MyViewModel(application)
+                    MonMenu(modifier = Modifier.padding(innerPadding), model = model, onRemplirAnimals = model::remplirAnimaux, onRemplirActivites = model::remplirActivites, onRemplirActivitesAnimaux = model::remplirActivitesAnimaux)
                 }
             }
         }
@@ -58,7 +59,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MonMenu(modifier: Modifier = Modifier, model: MyViewModel = viewModel()) {
+fun MonMenu(modifier: Modifier = Modifier, model: MyViewModel = viewModel(), onRemplirAnimals: () -> Unit = {}, onRemplirActivites: () -> Unit, onRemplirActivitesAnimaux: () -> Unit) {
+
+    onRemplirAnimals()
+    onRemplirActivites()
+    onRemplirActivitesAnimaux()
 
     val animaux by model.animals.collectAsState(listOf())
 
@@ -72,14 +77,14 @@ fun MonMenu(modifier: Modifier = Modifier, model: MyViewModel = viewModel()) {
         Box(
             modifier = modifier.padding(100.dp)
         )
-        ImageScrollView(modifier = Modifier.weight(1f), animaux, onRemplirAnimals = model::remplirAnimaux)
-        MyButton(modifier = Modifier.align(Alignment.End), onClearAnimal = model::clearDatabase)
+        ImageScrollView(modifier = Modifier.weight(1f), animaux)
+        MyButton(modifier = Modifier.align(Alignment.End), onClearAnimal = model::clearDatabaseAnimal, model::clearDatabaseActivite, model::clearDatabaseActiviteAnimal)
     }
 
 }
 
 @Composable
-fun MyButton(modifier: Modifier = Modifier, onClearAnimal: () -> Unit = {}) {
+fun MyButton(modifier: Modifier = Modifier, onClearAnimal: () -> Unit = {}, onClearActivite: () -> Unit = {}, onClearActiviteAnimal: () -> Unit = {}) {
     val context = LocalContext.current
     Row (
         modifier = modifier
@@ -111,7 +116,11 @@ fun MyButton(modifier: Modifier = Modifier, onClearAnimal: () -> Unit = {}) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "Ajouter")
         }
         IconButton(
-            onClick = { onClearAnimal() },
+            onClick = {
+                onClearAnimal()
+                onClearActivite()
+                onClearActiviteAnimal()
+                      },
             modifier = modifier
                 .padding(8.dp)
             ) {
@@ -121,8 +130,7 @@ fun MyButton(modifier: Modifier = Modifier, onClearAnimal: () -> Unit = {}) {
 }
 
 @Composable
-fun ImageScrollView(modifier: Modifier = Modifier, animaux: List<Animal>, onRemplirAnimals: () -> Unit = {}) {
-    onRemplirAnimals()
+fun ImageScrollView(modifier: Modifier = Modifier, animaux: List<Animal>) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 

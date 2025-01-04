@@ -5,9 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Activite::class], version = 3)
+@Database(entities = [ActiviteAnimal::class], version = 2)
 abstract class ActiviteAnimalBD : RoomDatabase() {
-    abstract fun MyDao(): MyDao
+    abstract fun ActiviteAnimalDao(): ActiviteAnimalDao
 
     companion object {
         @Volatile

@@ -4,9 +4,11 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(indices = [Index(value = ["id","animal"], unique = true)])
+@Entity(
+    primaryKeys = ["id","animal"],
+    indices = [Index(value = ["id","animal"])]
+)
 data class ActiviteAnimal(
-    @PrimaryKey(autoGenerate = true)
     val id: Int,
     val animal: String,
 )

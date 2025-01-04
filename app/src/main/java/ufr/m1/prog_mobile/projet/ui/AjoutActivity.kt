@@ -94,7 +94,7 @@ fun MonAjoutPreview(model: MyViewModel = viewModel()) {
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        BackButtun()
+        BackButton()
         EntreText(onAddAnimal = model::addAnimal)
         Box (
             modifier = Modifier.padding(8.dp)
@@ -178,7 +178,7 @@ fun EntreText(onAddAnimal: (String, String, String?) -> Unit){
 
 @Preview(showBackground = true)
 @Composable
-fun BackButtun(){
+fun BackButton(){
     val context = LocalContext.current
     Row (
         horizontalArrangement = Arrangement.SpaceBetween,
