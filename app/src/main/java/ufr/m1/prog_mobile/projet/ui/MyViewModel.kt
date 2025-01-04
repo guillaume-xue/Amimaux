@@ -8,18 +8,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ufr.m1.prog_mobile.projet.R
+import ufr.m1.prog_mobile.projet.data.Activite
+import ufr.m1.prog_mobile.projet.data.ActiviteAnimal
+import ufr.m1.prog_mobile.projet.data.ActiviteAnimalBD
+import ufr.m1.prog_mobile.projet.data.ActiviteBD
 import ufr.m1.prog_mobile.projet.data.Animal
 import ufr.m1.prog_mobile.projet.data.AnimalBD
 
 class MyViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val dao by lazy { AnimalBD.getDB(application).MyDao() }
-    private val list = application.resources.getStringArray(R.array.animals)
     private var erreurIns= mutableStateOf(false)
+    private val prefix = mutableStateOf("")
+
+    // AnimalDao
+    private val AnimalDao by lazy { AnimalBD.getDB(application).MyDao() }
+    private val AnimalList = application.resources.getStringArray(R.array.animals)
+
 
     fun addAnimal(nom: String, espece: String, photo: String?) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = dao.insertAnimal(Animal(nom = nom, espece = espece, photo = photo))
+            val result = AnimalDao.insertAnimal(Animal(nom = nom, espece = espece, photo = photo))
             if (result == -1L) {
                 withContext(Dispatchers.Main) {
                     erreurIns.value = true
@@ -28,20 +36,74 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private val prefix = mutableStateOf("")
-    var animals = dao.getAnimalsPref(prefix.value)
+    var animals = AnimalDao.getAnimalsPref(prefix.value)
 
     fun remplirAnimaux() {
-        for (i in list.indices step 3) {
-            addAnimal(nom = list[i], espece = list[i + 1], photo = list[i + 2])
+        for (i in AnimalList.indices step 3) {
+            addAnimal(nom = AnimalList[i], espece = AnimalList[i + 1], photo = AnimalList[i + 2])
         }
     }
 
-    fun clearDatabase() {
+    fun clearDatabaseAnimal() {
         viewModelScope.launch {
-            dao.clearAllAnimals()
+            AnimalDao.clearAllAnimals()
         }
     }
 
+    // ActiviteDao
+
+    private val ActiviteDao by lazy { ActiviteBD.getDB(application).MyDao() }
+    private val ActiviteList = application.resources.getStringArray(R.array.activites)
+
+    fun addActivite(id: Int, texte: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = ActiviteDao.insertActivite(Activite(id = id, texte = texte))
+            if (result == -1L) {
+                withContext(Dispatchers.Main) {
+                    erreurIns.value = true
+                }
+            }
+        }
+    }
+
+    fun remplirActivites() {
+        for (i in ActiviteList.indices step 2) {
+            addActivite(id = ActiviteList[i].toInt(), texte = ActiviteList[i+1])
+        }
+    }
+
+    fun clearDatabaseActivite() {
+        viewModelScope.launch {
+            ActiviteDao.clearAllActivites()
+        }
+    }
+
+    // ActiviteAnimalDao
+
+    private val ActiviteAnimalDao by lazy { ActiviteAnimalBD.getDB(application).MyDao() }
+    private val ActiviteAnimalList = application.resources.getStringArray(R.array.activites_animals)
+
+    fun addActiviteAnimal(id: Int, animal: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = ActiviteAnimalDao.insertActiviteAnimal(ActiviteAnimal(id = id, animal = animal))
+            if (result == -1L) {
+                withContext(Dispatchers.Main) {
+                    erreurIns.value = true
+                }
+            }
+        }
+    }
+
+    fun remplirActivitesAnimaux() {
+        for (i in ActiviteAnimalList.indices step 2) {
+            addActiviteAnimal(id = ActiviteAnimalList[i].toInt(), animal = ActiviteAnimalList[i+1])
+        }
+    }
+
+    fun clearDatabaseActiviteAnimal() {
+        viewModelScope.launch {
+            ActiviteAnimalDao.clearAllActiviteAnimals()
+        }
+    }
 
 }

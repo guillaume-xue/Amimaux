@@ -16,4 +16,50 @@
         <item>poisson</item>
     </string-array>
 
+    <string-array name="activites_animals">
+        <item>1</item>
+        <item>cat</item>
+        <item>1</item>
+        <item>dog</item>
+        <item>1</item>
+        <item>hamster</item>
+        <item>1</item>
+        <item>fish</item>
+        <item>2</item>
+        <item>cat</item>
+        <item>2</item>
+        <item>dog</item>
+        <item>2</item>
+        <item>hamster</item>
+        <item>2</item>
+        <item>fish</item>
+        <item>3</item>
+        <item>cat</item>
+        <item>3</item>
+        <item>dog</item>
+        <item>3</item>
+        <item>hamster</item>
+        <item>3</item>
+        <item>fish</item>
+        <item>4</item>
+        <item>cat</item>
+        <item>4</item>
+        <item>dog</item>
+        <item>4</item>
+        <item>hamster</item>
+        <item>4</item>
+        <item>fish</item>
+    </string-array>
+
+    <string-array name="activites">
+        <item>1</item>
+        <item>Donner à manger</item>
+        <item>2</item>
+        <item>aller au coiffeur</item>
+        <item>3</item>
+        <item>aller au vétérinaire</item>
+        <item>4</item>
+        <item>promenade</item>
+    </string-array>
+
 </resources>

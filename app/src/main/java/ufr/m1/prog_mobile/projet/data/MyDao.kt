@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MyDao {
 
+    // Animal
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAnimal(animal: Animal): Long
 
@@ -23,4 +24,37 @@ interface MyDao {
 
     @Query("DELETE FROM Animal")
     suspend fun clearAllAnimals()
+
+    // Activite
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertActivite(activite: Activite): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertActivites(activite: List<Activite>)
+
+    @Query("SELECT * FROM Activite")
+    fun getActivites(): Flow<List<Activite>>
+
+    @Query("SELECT * FROM Activite WHERE nom LIKE :pref || '%'")
+    fun getActivitesPref(pref: String): Flow<List<Activite>>
+
+    @Query("DELETE FROM Activite")
+    suspend fun clearAllActivites()
+
+    // ActiviteAnimal
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertActiviteAnimal(activiteAnimal: ActiviteAnimal): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertActiviteAnimals(activiteAnimal: List<ActiviteAnimal>)
+
+    @Query("SELECT * FROM ActiviteAnimal")
+    fun getActiviteAnimals(): Flow<List<ActiviteAnimal>>
+
+    @Query("SELECT * FROM ActiviteAnimal WHERE nom LIKE :pref || '%'")
+    fun getActiviteAnimalsPref(pref: String): Flow<List<ActiviteAnimal>>
+
+    @Query("DELETE FROM ActiviteAnimal")
+    suspend fun clearAllActiviteAnimals()
+
 }
