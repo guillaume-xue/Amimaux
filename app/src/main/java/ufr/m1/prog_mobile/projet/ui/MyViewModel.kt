@@ -19,15 +19,16 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
 
     private var erreurIns= mutableStateOf(false)
     private val prefix = mutableStateOf("")
+    private var isInitialized = false
 
     // AnimalDao
-    private val AnimalDao by lazy { AnimalBD.getDB(application).AnimalDao() }
-    private val AnimalList = application.resources.getStringArray(R.array.animals)
+    private val animalDao by lazy { AnimalBD.getDB(application).AnimalDao() }
+    private val animalList = application.resources.getStringArray(R.array.animals)
 
 
     fun addAnimal(nom: String, espece: String, photo: String?) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = AnimalDao.insertAnimal(Animal(nom = nom, espece = espece, photo = photo))
+            val result = animalDao.insertAnimal(Animal(nom = nom, espece = espece, photo = photo))
             if (result == -1L) {
                 withContext(Dispatchers.Main) {
                     erreurIns.value = true
@@ -36,29 +37,29 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    var animals = AnimalDao.getAnimalsPref(prefix.value)
+    var animals = animalDao.getAnimalsPref(prefix.value)
 
     fun remplirAnimaux() {
-        for (i in AnimalList.indices step 3) {
-            addAnimal(nom = AnimalList[i], espece = AnimalList[i + 1], photo = AnimalList[i + 2])
+        for (i in animalList.indices step 3) {
+            addAnimal(nom = animalList[i], espece = animalList[i + 1], photo = animalList[i + 2])
         }
     }
 
     fun clearDatabaseAnimal() {
         viewModelScope.launch {
-            AnimalDao.clearAllAnimals()
+            animalDao.clearAllAnimals()
         }
     }
 
     // ActiviteDao
 
-    private val ActiviteDao by lazy { ActiviteBD.getDB(application).ActiviteDao() }
-    private val ActiviteList = application.resources.getStringArray(R.array.activites)
+    private val activiteDao by lazy { ActiviteBD.getDB(application).ActiviteDao() }
+    private val activiteList = application.resources.getStringArray(R.array.activites)
 
 
     fun addActivite(id: Int?, texte: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = ActiviteDao.insertActivite(Activite(id = id, texte = texte))
+            val result = activiteDao.insertActivite(Activite(id = id, texte = texte))
             if (result == -1L) {
                 withContext(Dispatchers.Main) {
                     erreurIns.value = true
@@ -67,34 +68,34 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    var activites = ActiviteDao.getActivitesPref(prefix.value)
+    var activites = activiteDao.getActivitesPref(prefix.value)
 
     fun remplirActivites() {
-        for (i in ActiviteList.indices step 2) {
-            addActivite(id = ActiviteList[i].toInt(), texte = ActiviteList[i+1])
+        for (i in activiteList.indices step 2) {
+            addActivite(id = activiteList[i].toInt(), texte = activiteList[i+1])
         }
     }
 
     fun clearDatabaseActivite() {
         viewModelScope.launch {
-            ActiviteDao.clearAllActivites()
+            activiteDao.clearAllActivites()
         }
     }
 
     fun deleteActivite(id: Int) {
         viewModelScope.launch {
-            ActiviteDao.deleteActivite(id)
+            activiteDao.deleteActivite(id)
         }
     }
 
     // ActiviteAnimalDao
 
-    private val ActiviteAnimalDao by lazy { ActiviteAnimalBD.getDB(application).ActiviteAnimalDao() }
-    private val ActiviteAnimalList = application.resources.getStringArray(R.array.activites_animals)
+    private val activiteAnimalDao by lazy { ActiviteAnimalBD.getDB(application).ActiviteAnimalDao() }
+    private val activiteAnimalList = application.resources.getStringArray(R.array.activites_animals)
 
     fun addActiviteAnimal(id: Int, animal: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = ActiviteAnimalDao.insertActiviteAnimal(ActiviteAnimal(id = id, animal = animal))
+            val result = activiteAnimalDao.insertActiviteAnimal(ActiviteAnimal(id = id, animal = animal))
             if (result == -1L) {
                 withContext(Dispatchers.Main) {
                     erreurIns.value = true
@@ -103,24 +104,34 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    var activiteAnimals = ActiviteAnimalDao.getActiviteAnimalsPref(prefix.value)
+    var activiteAnimals = activiteAnimalDao.getActiviteAnimalsPref(prefix.value)
 
     fun remplirActivitesAnimaux() {
-        for (i in ActiviteAnimalList.indices step 2) {
-            addActiviteAnimal(id = ActiviteAnimalList[i].toInt(), animal = ActiviteAnimalList[i+1])
+        for (i in activiteAnimalList.indices step 2) {
+            addActiviteAnimal(id = activiteAnimalList[i].toInt(), animal = activiteAnimalList[i+1])
         }
     }
 
     fun clearDatabaseActiviteAnimal() {
         viewModelScope.launch {
-            ActiviteAnimalDao.clearAllActiviteAnimals()
+            activiteAnimalDao.clearAllActiviteAnimals()
         }
     }
 
     fun deleteActiviteAnimal(id: Int, animal: String) {
         viewModelScope.launch {
-            ActiviteAnimalDao.deleteActiviteAnimal(id, animal)
+            activiteAnimalDao.deleteActiviteAnimal(id, animal)
         }
     }
+
+    fun initializeData() {
+        if (!isInitialized) {
+            remplirAnimaux()
+            remplirActivites()
+            remplirActivitesAnimaux()
+            isInitialized = true
+        }
+    }
+
 
 }

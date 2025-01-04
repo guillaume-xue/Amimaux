@@ -54,9 +54,11 @@ class AnimalInfoActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val app = application as MyApplication
+            val model = app.viewModel
             ProjetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MonAnimalInfo(modifier = Modifier.padding(innerPadding))
+                    MonAnimalInfo(modifier = Modifier.padding(innerPadding), model)
                 }
             }
         }
@@ -64,8 +66,11 @@ class AnimalInfoActivity : ComponentActivity() {
 }
 
 @Composable
-fun MonAnimalInfo(modifier: Modifier, model: MyViewModel = viewModel()) {
+fun MonAnimalInfo(modifier: Modifier, model: MyViewModel) {
     val animaux by model.animals.collectAsState(listOf())
+    val activites by model.activites.collectAsState(listOf())
+    val activitesAnimals by model.activiteAnimals.collectAsState(listOf())
+
     val context = LocalContext.current
     val iii = (context as Activity).intent
     val nom = iii.getStringExtra("animal")
@@ -73,8 +78,6 @@ fun MonAnimalInfo(modifier: Modifier, model: MyViewModel = viewModel()) {
     val ajouter = remember { mutableStateOf(true) }
     val texte = remember { mutableStateOf("") }
 
-    val activites by model.activites.collectAsState(listOf())
-    val activitesAnimals by model.activiteAnimals.collectAsState(listOf())
     val activiteList = remember { mutableStateListOf<String>() }
 
     val selectActiviteColor = remember { mutableStateListOf<Color>() }

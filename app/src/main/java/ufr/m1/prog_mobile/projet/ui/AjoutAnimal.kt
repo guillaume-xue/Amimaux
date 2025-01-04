@@ -48,7 +48,7 @@ import ufr.m1.prog_mobile.projet.R
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
 import coil.compose.rememberImagePainter
 
-class AjoutActivity : ComponentActivity() {
+class AjoutAnimal : ComponentActivity() {
     var selectedImageUri: Uri? = null
 
     private val getImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -64,9 +64,11 @@ class AjoutActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val app = application as MyApplication
+            val model = app.viewModel
             ProjetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MonAjout(modifier = Modifier.padding(innerPadding))
+                    MonAjout(modifier = Modifier.padding(innerPadding), model)
                 }
             }
         }
@@ -80,12 +82,12 @@ class AjoutActivity : ComponentActivity() {
 }
 
 @Composable
-fun MonAjout(modifier: Modifier){
-    MonAjoutPreview()
+fun MonAjout(modifier: Modifier, model: MyViewModel){
+    MonAjoutPreview(model)
 }
 
 @Composable
-fun MonAjoutPreview(model: MyViewModel = viewModel()) {
+fun MonAjoutPreview(model: MyViewModel) {
 
     Column (
         modifier = Modifier
@@ -108,7 +110,7 @@ fun EntreText(onAddAnimal: (String, String, String?) -> Unit){
     val context = LocalContext.current
     var nom by remember { mutableStateOf("") }
     var espece by remember { mutableStateOf("") }
-    val activity = context as AjoutActivity
+    val activity = context as AjoutAnimal
     Column (
         modifier = Modifier
             .fillMaxWidth(),

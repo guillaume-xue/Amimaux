@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,11 +48,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val app = application as MyApplication
+            val model = app.viewModel
+            LaunchedEffect(Unit) {
+                model.initializeData()
+            }
             ProjetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
-                    val model = MyViewModel(application)
-                    MonMenu(modifier = Modifier.padding(innerPadding), model = model, onRemplirAnimals = model::remplirAnimaux, onRemplirActivites = model::remplirActivites, onRemplirActivitesAnimaux = model::remplirActivitesAnimaux)
+                    MonMenu(modifier = Modifier.padding(innerPadding), model = model)
                 }
             }
         }
@@ -59,12 +63,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MonMenu(modifier: Modifier = Modifier, model: MyViewModel = viewModel(), onRemplirAnimals: () -> Unit = {}, onRemplirActivites: () -> Unit, onRemplirActivitesAnimaux: () -> Unit) {
-
-    onRemplirAnimals()
-    onRemplirActivites()
-    onRemplirActivitesAnimaux()
-
+fun MonMenu(modifier: Modifier, model: MyViewModel) {
     val animaux by model.animals.collectAsState(listOf())
 
     Column(
@@ -80,11 +79,10 @@ fun MonMenu(modifier: Modifier = Modifier, model: MyViewModel = viewModel(), onR
         ImageScrollView(modifier = Modifier.weight(1f), animaux)
         MyButton(modifier = Modifier.align(Alignment.End), onClearAnimal = model::clearDatabaseAnimal, model::clearDatabaseActivite, model::clearDatabaseActiviteAnimal)
     }
-
 }
 
 @Composable
-fun MyButton(modifier: Modifier = Modifier, onClearAnimal: () -> Unit = {}, onClearActivite: () -> Unit = {}, onClearActiviteAnimal: () -> Unit = {}) {
+fun MyButton(modifier: Modifier, onClearAnimal: () -> Unit = {}, onClearActivite: () -> Unit = {}, onClearActiviteAnimal: () -> Unit = {}) {
     val context = LocalContext.current
     Row (
         modifier = modifier
@@ -104,8 +102,7 @@ fun MyButton(modifier: Modifier = Modifier, onClearAnimal: () -> Unit = {}, onCl
         }
         IconButton(
             onClick = {
-
-                val iii = Intent(context, AjoutActivity::class.java)
+                val iii = Intent(context, AjoutAnimal::class.java)
                 context.startActivity(iii)
             },
             modifier = modifier
@@ -130,7 +127,7 @@ fun MyButton(modifier: Modifier = Modifier, onClearAnimal: () -> Unit = {}, onCl
 }
 
 @Composable
-fun ImageScrollView(modifier: Modifier = Modifier, animaux: List<Animal>) {
+fun ImageScrollView(modifier: Modifier, animaux: List<Animal>) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
