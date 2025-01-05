@@ -24,9 +24,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import ufr.m1.prog_mobile.projet.data.Animal
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
@@ -54,7 +60,7 @@ class MainActivity : ComponentActivity() {
                 model.initializeData()
             }
             ProjetTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize(), topBar = { MonTopBar() }) { innerPadding ->
                     MonMenu(modifier = Modifier.padding(innerPadding), model = model)
                 }
             }
@@ -155,7 +161,7 @@ fun ImageScrollView(modifier: Modifier, animaux: List<Animal>) {
                 } else {
                     val uri = Uri.parse(photo)
                     Image(
-                        painter = rememberImagePainter(data = uri),
+                        painter = rememberAsyncImagePainter(model = uri),
                         contentDescription = animal.nom,
                         modifier = Modifier
                             .padding(16.dp)
@@ -170,3 +176,19 @@ fun ImageScrollView(modifier: Modifier, animaux: List<Animal>) {
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MonTopBar() = TopAppBar(
+    title = {
+        Column (
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ){
+            Text("Amimaux", style = MaterialTheme.typography.displayMedium)
+        }
+    },
+    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+    modifier = Modifier.fillMaxWidth(),
+)

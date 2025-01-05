@@ -13,22 +13,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -49,9 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import ufr.m1.prog_mobile.projet.data.Activite
 import ufr.m1.prog_mobile.projet.data.ActiviteAnimal
 import ufr.m1.prog_mobile.projet.data.Animal
@@ -168,14 +160,15 @@ fun ActiviteList(
     LazyColumn (
         modifier = Modifier
             .heightIn(max = 150.dp)
-            .padding(16.dp)
+            .padding(8.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ){
         itemsIndexed(activiteList) { index, activite ->
             Text(
                 activite,
                 modifier = Modifier
                     .padding(8.dp)
-                    .fillMaxWidth()
                     .background(selectActiviteColor[index])
                     .clickable {
                         selectActiviteColor[index] = if (selectActiviteColor[index] == Color.Transparent) Color(0xFFB0B0B0) else Color.Transparent
