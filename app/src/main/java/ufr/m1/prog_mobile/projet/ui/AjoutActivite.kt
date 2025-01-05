@@ -1,6 +1,8 @@
 package ufr.m1.prog_mobile.projet.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -45,9 +47,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import okhttp3.internal.notifyAll
 import ufr.m1.prog_mobile.projet.data.Activite
 import ufr.m1.prog_mobile.projet.data.ActiviteAnimal
 import ufr.m1.prog_mobile.projet.data.Animal
+import ufr.m1.prog_mobile.projet.data.NotifDelay
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
 
 class AjoutActivite : ComponentActivity() {
@@ -70,21 +74,23 @@ class AjoutActivite : ComponentActivity() {
 
 @Composable
 fun Greeting(modifier: Modifier, model: MyViewModel) {
+
     val animaux by model.animals.collectAsState(listOf())
     val activites by model.activites.collectAsState(listOf())
     val activitesAnimals by model.activiteAnimals.collectAsState(listOf())
 
     val animalSelect = remember { mutableStateListOf<Animal>() }
-
+    val activiteList = remember { mutableStateListOf<String>() }
     val context = LocalContext.current
     val iii = (context as Activity).intent
     val nom = iii.getStringExtra("animal")
 
-    val animal = animaux.find { it.nom == nom } ?: Animal("Inconnu", "Inconnu", "Inconnu")
+    val animal = animaux.find { it.nom == model.selectedAnimal.value?.nom } ?: Animal("Inconnu", "Inconnu", "Inconnu")
+
     val ajouter = remember { mutableStateOf(true) }
     val texte = remember { mutableStateOf("") }
 
-    val activiteList = remember { mutableStateListOf<String>() }
+
 
     val selectActiviteColor = remember { mutableStateListOf<Color>() }
     val selectActivite = remember { mutableStateListOf<String>() }
@@ -97,36 +103,93 @@ fun Greeting(modifier: Modifier, model: MyViewModel) {
         selectActiviteColor.add(Color.Transparent)
     }
 
-
-
     Column (modifier = modifier.padding(8.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally){
         BackButton()
-//        ActiviteList(activiteList, selectActiviteColor, selectActivite)
-        SelectionAnimal(animaux = animaux, onAnimalSelected = { selectedAnimal ->
-            animalSelect.add(selectedAnimal)
-        })
+
+        SelectionAnimal(animaux = animaux, model = model)
+        ActiviteList(activiteList, selectActiviteColor, selectActivite)
         TextAjoutActivite(texte)
+        DelaySelection(model)
         RadioButtonValide(ajouter)
         ButtonValide(context, texte, ajouter, animal.nom, selectActivite,activitesAnimals, activites, model::addActiviteAnimal, model::addActivite, model::deleteActiviteAnimal, model::deleteActivite)
 
     }
 }
 
+@SuppressLint("StateFlowValueCalledInComposition", "DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectionAnimal(animaux: List<Animal>, onAnimalSelected: (Animal) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    var selectedAnimal by remember { mutableStateOf<Animal?>(null) }
+fun DelaySelection(model: MyViewModel){
     val context = LocalContext.current
+    val delays = NotifDelay.entries
+    var expanded by remember { mutableStateOf(false) }
+
+    val timePickerDialog = remember {
+        TimePickerDialog(
+            context,
+            { _, hourOfDay, minute ->
+                // Format de l'heure : HH:MM
+                model.selectTime(String.format("%02d:%02d", hourOfDay, minute))
+            },
+            12, // Heure par défaut
+            0,  // Minute par défaut
+            true // Format 24h
+        )
+    }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
         OutlinedTextField(
-            value = selectedAnimal?.nom ?: "Select Animal",
+            value = model.selectedDelayType.value.name,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Delay") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            delays.forEach { delay ->
+                DropdownMenuItem(
+                    text = { Text(text = delay.name) },
+                    onClick = {
+                        model.selectDelayType(delay)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+    Button(
+        onClick = { timePickerDialog.show() },
+        modifier = Modifier.fillMaxWidth()
+    ){
+        Text("Select Time : ${model.selectedTime.value}")
+    }
+}
+
+@SuppressLint("StateFlowValueCalledInComposition")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectionAnimal(animaux: List<Animal>, model: MyViewModel) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = model.selectedAnimal.value?.nom ?: "Select Animal",
             onValueChange = {},
             readOnly = true,
             label = { Text("Animal") },
@@ -145,9 +208,8 @@ fun SelectionAnimal(animaux: List<Animal>, onAnimalSelected: (Animal) -> Unit) {
                 DropdownMenuItem(
                     text = { Text(text = animal.nom) },
                     onClick = {
-                        selectedAnimal = animal
+                        model.selectAnimal(animal)
                         expanded = false
-                        onAnimalSelected(animal)
                     }
                 )
             }

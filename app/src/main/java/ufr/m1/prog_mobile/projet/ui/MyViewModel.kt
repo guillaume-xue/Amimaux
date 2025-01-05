@@ -1,10 +1,15 @@
 package ufr.m1.prog_mobile.projet.ui
 
 import android.app.Application
+import android.app.TimePickerDialog
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ufr.m1.prog_mobile.projet.R
@@ -14,6 +19,7 @@ import ufr.m1.prog_mobile.projet.data.ActiviteAnimalBD
 import ufr.m1.prog_mobile.projet.data.ActiviteBD
 import ufr.m1.prog_mobile.projet.data.Animal
 import ufr.m1.prog_mobile.projet.data.AnimalBD
+import ufr.m1.prog_mobile.projet.data.NotifDelay
 
 class MyViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -132,6 +138,34 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
             isInitialized = true
         }
     }
+
+    private val _selectedAnimal = MutableStateFlow<Animal?>(null)
+    val selectedAnimal: StateFlow<Animal?> = _selectedAnimal
+
+    fun selectAnimal(animal: Animal) {
+        viewModelScope.launch {
+            _selectedAnimal.value = animal
+        }
+    }
+
+    private val _selectedDelayType = MutableStateFlow<NotifDelay>(NotifDelay.Unique)
+    val selectedDelayType: StateFlow<NotifDelay> = _selectedDelayType
+
+    fun selectDelayType(delayType: NotifDelay) {
+        viewModelScope.launch {
+            _selectedDelayType.value = delayType
+        }
+    }
+
+    private val _selectedTime = MutableStateFlow("00:00")
+    val selectedTime: StateFlow<String> = _selectedTime
+
+    fun selectTime(time: String) {
+        viewModelScope.launch {
+            _selectedTime.value = time
+        }
+    }
+
 
 
 }
