@@ -13,16 +13,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -43,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import ufr.m1.prog_mobile.projet.data.Activite
 import ufr.m1.prog_mobile.projet.data.ActiviteAnimal
@@ -57,7 +65,9 @@ class AnimalInfoActivity : ComponentActivity() {
             val app = application as MyApplication
             val model = app.viewModel
             ProjetTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()){
+                    innerPadding ->
                     MonAnimalInfo(modifier = Modifier.padding(innerPadding), model)
                 }
             }
@@ -93,9 +103,10 @@ fun MonAnimalInfo(modifier: Modifier, model: MyViewModel) {
     }
 
     Column (
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(8.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
+
     ){
         BackButton()
         AnimalImage(animal)
@@ -127,17 +138,17 @@ fun AnimalImage(animal: Animal) {
             painter = painterResource(id = context.resources.getIdentifier(photo, "drawable", context.packageName)),
             contentDescription = animal.nom,
             modifier = Modifier
-                .padding(16.dp)
+                .padding(8.dp)
                 .size(300.dp)
                 .clip(RoundedCornerShape(16.dp))
         )
     } else {
         val uri = Uri.parse(photo)
         Image(
-            painter = rememberImagePainter(data = uri),
+            painter = rememberAsyncImagePainter(model = uri),
             contentDescription = animal.nom,
             modifier = Modifier
-                .padding(16.dp)
+                .padding(8.dp)
                 .size(300.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .clickable {
@@ -155,7 +166,9 @@ fun ActiviteList(
 ) {
 
     LazyColumn (
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier
+            .heightIn(max = 150.dp)
+            .padding(16.dp)
     ){
         itemsIndexed(activiteList) { index, activite ->
             Text(
@@ -174,11 +187,11 @@ fun ActiviteList(
                     }
             )
             if (index < activiteList.size - 1) {
-                Divider(
-                    color = Color.Gray,
+                HorizontalDivider(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(1.dp)
+                        .height(1.dp),
+                    color = Color.Gray
                 )
             }
         }
@@ -193,9 +206,10 @@ fun TextAjoutActivite(texte: MutableState<String>){
         onValueChange = {texte.value = it},
         label = { Text("Ajouter une activité") },
         modifier = Modifier
-            .padding(16.dp)
-            .height(50.dp)
+            .padding(8.dp)
+            .height(60.dp)
             .fillMaxWidth()
+
     )
 }
 
@@ -243,7 +257,7 @@ fun ButtonValide(
             text.value = ""
         },
         modifier = Modifier
-            .padding(16.dp)
+            .padding(8.dp)
             .fillMaxWidth()
     ) {
         Text("Valider")
