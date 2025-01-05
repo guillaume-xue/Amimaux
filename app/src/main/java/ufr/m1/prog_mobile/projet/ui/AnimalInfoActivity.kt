@@ -48,6 +48,7 @@ import coil.compose.rememberAsyncImagePainter
 import ufr.m1.prog_mobile.projet.data.Activite
 import ufr.m1.prog_mobile.projet.data.ActiviteAnimal
 import ufr.m1.prog_mobile.projet.data.Animal
+import ufr.m1.prog_mobile.projet.data.NotifDelay
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
 
 class AnimalInfoActivity : ComponentActivity() {
@@ -83,16 +84,24 @@ fun MonAnimalInfo(modifier: Modifier, model: MyViewModel) {
     val texte = remember { mutableStateOf("") }
 
     val activiteList = remember { mutableStateListOf<String>() }
+    val activiteDelay = remember { mutableStateListOf<NotifDelay>() }
+    val activiteTime = remember { mutableStateListOf<String>() }
 
     val selectActiviteColor = remember { mutableStateListOf<Color>() }
     val selectActivite = remember { mutableStateListOf<String>() }
 
+    activiteList.clear()
+    activiteDelay.clear()
+    activiteTime.clear()
+    selectActiviteColor.clear()
     for (activiteAnimal in activitesAnimals) {
-        if (activiteAnimal.animal == animal.nom) {
+        if (activiteAnimal.animal == nom) {
             val activite = activites.find { it.id == activiteAnimal.id }
+            activiteDelay.add(activiteAnimal.frequence)
+            activiteTime.add(activiteAnimal.timer)
             activiteList.add(activite?.texte ?: "Inconnu")
+            selectActiviteColor.add(Color.Transparent)
         }
-        selectActiviteColor.add(Color.Transparent)
     }
 
     Column (
@@ -104,7 +113,7 @@ fun MonAnimalInfo(modifier: Modifier, model: MyViewModel) {
         BackButton()
         AnimalImage(animal)
         AnimalInfo(animal)
-        ActiviteList(activiteList)
+        ActiviteList(activiteList, activiteDelay, activiteTime)
 //        ActiviteList(activiteList, selectActiviteColor, selectActivite)
 //        TextAjoutActivite(texte)
 //        RadioButtonValide(ajouter)
@@ -159,6 +168,8 @@ fun AnimalImage(animal: Animal) {
 @Composable
 fun ActiviteList(
     activiteList: SnapshotStateList<String>,
+    activiteDelay: SnapshotStateList<NotifDelay>,
+    activiteTime: SnapshotStateList<String>
 ) {
 
     LazyColumn (
@@ -169,8 +180,9 @@ fun ActiviteList(
         horizontalAlignment = Alignment.CenterHorizontally,
     ){
         itemsIndexed(activiteList) { index, activite ->
+            val text = activite + " : " + activiteDelay[index].name + " " + activiteTime[index]
             Text(
-                activite,
+                text,
                 modifier = Modifier
                     .padding(8.dp)
                     .background(Color.Transparent)

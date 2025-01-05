@@ -302,6 +302,7 @@ fun TextAjoutActivite(texte: MutableState<String>){
     )
 }
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun ActiviteList(
     activiteList: SnapshotStateList<String>,

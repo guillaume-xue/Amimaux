@@ -1,11 +1,16 @@
 package ufr.m1.prog_mobile.projet.ui
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,8 +39,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,13 +51,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import coil.compose.rememberAsyncImagePainter
 import ufr.m1.prog_mobile.projet.data.Animal
+import ufr.m1.prog_mobile.projet.data.NotifDelay
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
+import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.LocalTime
+import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var boo = false;
+        var work : MyWorker
+
+        val requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ){ boo = it }
+        requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+
         enableEdgeToEdge()
         setContent {
             val app = application as MyApplication
@@ -57,6 +85,7 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(Unit) {
                 model.initializeData()
             }
+            notif(model)
             ProjetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize(), topBar = { MonTopBar() }) { innerPadding ->
                     MonMenu(modifier = Modifier.padding(innerPadding), model = model)
@@ -69,6 +98,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MonMenu(modifier: Modifier, model: MyViewModel) {
     val animaux by model.animals.collectAsState(listOf())
+
 
     Column(
         modifier = modifier
@@ -193,3 +223,75 @@ fun MonTopBar() = TopAppBar(
     colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
     modifier = Modifier.fillMaxWidth(),
 )
+
+@Composable
+fun notif(model : MyViewModel){
+    val vm = WorkManager.getInstance(context = LocalContext.current)
+    val activitesAnimals by model.activiteAnimals.collectAsState(listOf())
+    val activites by model.activites.collectAsState(listOf())
+    for (activiteAnimal in activitesAnimals) {
+        when (activiteAnimal.frequence) {
+            NotifDelay.Unique -> {
+                val data = workDataOf(
+                    "animal" to activiteAnimal.animal,
+                    "activite" to activites.find { it.id == activiteAnimal.id }?.texte
+                )
+                val workRequest = OneTimeWorkRequestBuilder<MyWorker>()
+                    .setInitialDelay(calculateDelayInMillis(activiteAnimal.timer), TimeUnit.SECONDS)
+                    .setInputData(data)
+                    .addTag(activiteAnimal.animal + "_" + activiteAnimal.id)
+                    .build()
+                vm.enqueue(workRequest)
+            }
+            NotifDelay.Quotidien -> {
+                val data = workDataOf(
+                    "animal" to activiteAnimal.animal,
+                    "activite" to activites.find { it.id == activiteAnimal.id }?.texte
+                )
+                val workRequest = PeriodicWorkRequestBuilder<MyWorker>(1, TimeUnit.DAYS)
+                    .setInitialDelay(calculateDelayInMillis(activiteAnimal.timer, 1), TimeUnit.SECONDS)
+                    .setInputData(data)
+                    .addTag(activiteAnimal.animal + "_" + activiteAnimal.id)
+                    .build()
+                vm.enqueue(workRequest)
+            }
+            NotifDelay.Hebdomadaire -> {
+                val data = workDataOf(
+                    "animal" to activiteAnimal.animal,
+                    "activite" to activites.find { it.id == activiteAnimal.id }?.texte
+                )
+                val workRequest = PeriodicWorkRequestBuilder<MyWorker>(7, TimeUnit.DAYS)
+                    .setInitialDelay(calculateDelayInMillis(activiteAnimal.timer, 7), TimeUnit.SECONDS)
+                    .setInputData(data)
+                    .addTag(activiteAnimal.animal + "_" + activiteAnimal.id)
+                    .build()
+                vm.enqueue(workRequest)
+            }
+        }
+    }
+}
+
+@Composable
+fun calculateDelayInMillis(timeString: String, days: Int? = null): Long {
+    val time = timeString.split(":")
+    val targetHour = time[0].toInt()
+    val targetMinute = time[1].toInt()
+
+// Heure actuelle
+    val now = LocalTime.now()
+    val nowInSeconds = now.hour * 3600 + now.minute * 60 + now.second
+
+// Heure cible
+    val targetInSeconds = targetHour * 3600 + targetMinute * 60
+
+// Calculer la durée entre maintenant et l'heure cible
+    val durationInSeconds = if (nowInSeconds < targetInSeconds) {
+        targetInSeconds - nowInSeconds
+    } else {
+        // Si l'heure cible est déjà passée aujourd'hui, ajouter 24 heures
+        targetInSeconds + 86400 - nowInSeconds
+    }
+// Retourner la durée en secondes
+    return durationInSeconds.toLong()
+}
+
