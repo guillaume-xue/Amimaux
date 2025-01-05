@@ -3,6 +3,7 @@ package ufr.m1.prog_mobile.projet.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -21,6 +22,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -28,6 +31,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -84,6 +89,9 @@ fun Greeting(modifier: Modifier, model: MyViewModel) {
 
     val animalSelect = remember { mutableStateListOf<Animal>() }
     val activiteList = remember { mutableStateListOf<String>() }
+    val activiteDelay = remember { mutableStateListOf<NotifDelay>() }
+    val activiteTime = remember { mutableStateListOf<String>() }
+
     val context = LocalContext.current
     val iii = (context as Activity).intent
     val nom = iii.getStringExtra("animal") ?: "Inconnu"
@@ -95,10 +103,14 @@ fun Greeting(modifier: Modifier, model: MyViewModel) {
     val selectActivite = remember { mutableStateListOf<String>() }
 
     activiteList.clear()
+    activiteDelay.clear()
+    activiteTime.clear()
     selectActiviteColor.clear()
     for (activiteAnimal in activitesAnimals) {
         if (activiteAnimal.animal == nom) {
             val activite = activites.find { it.id == activiteAnimal.id }
+            activiteDelay.add(activiteAnimal.frequence)
+            activiteTime.add(activiteAnimal.timer)
             activiteList.add(activite?.texte ?: "Inconnu")
             selectActiviteColor.add(Color.Transparent)
         }
@@ -108,10 +120,10 @@ fun Greeting(modifier: Modifier, model: MyViewModel) {
     Column (modifier = modifier.padding(8.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally){
-        BackButton()
+        BackButton2(nom)
         SelectionAnimal(nom, model)
 
-        ActiviteList(activiteList, selectActiviteColor, selectActivite)
+        ActiviteList(activiteList, selectActiviteColor, selectActivite, activiteDelay, activiteTime)
         TextAjoutActivite(texte)
         DelaySelection(model)
         RadioButtonValide(ajouter)
@@ -294,7 +306,9 @@ fun TextAjoutActivite(texte: MutableState<String>){
 fun ActiviteList(
     activiteList: SnapshotStateList<String>,
     selectActiviteColor: SnapshotStateList<Color>,
-    selectActivite: SnapshotStateList<String>
+    selectActivite: SnapshotStateList<String>,
+    activiteDelay: SnapshotStateList<NotifDelay>,
+    activiteTime: SnapshotStateList<String>
 ) {
     LazyColumn (
         modifier = Modifier
@@ -304,28 +318,59 @@ fun ActiviteList(
         horizontalAlignment = Alignment.CenterHorizontally,
     ){
         itemsIndexed(activiteList) { index, activite ->
-            Text(
-                activite,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .background(Color.Transparent)
-//                    .clickable {
-//                        selectActiviteColor[index] = if (selectActiviteColor[index] == Color.Transparent) Color(0xFFB0B0B0) else Color.Transparent
-//                        if (selectActiviteColor[index] == Color.Transparent) {
-//                            selectActivite.remove(activite)
-//                        } else {
-//                            selectActivite.add(activite)
-//                        }
-//                    }
-            )
-//            if (index < activiteList.size - 1) {
-//                HorizontalDivider(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(1.dp),
-//                    color = Color.Gray
-//                )
-//            }
+            val text = activite + " : " + activiteDelay[index].name + " " + activiteTime[index]
+                Text(
+                    text,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .background(selectActiviteColor[index])
+                        .clickable {
+                            selectActiviteColor[index] = if (selectActiviteColor[index] == Color.Transparent) Color(
+                                0xFFB6B6B6
+                            ) else Color.Transparent
+                            if (selectActiviteColor[index] == Color.Transparent) {
+                                selectActivite.remove(activite)
+                            } else {
+                                selectActivite.add(activite)
+                            }
+                        }
+                )
+
+            if (index < activiteList.size - 1) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp),
+                    color = Color.Gray
+                )
+            }
         }
+    }
+}
+
+
+@Composable
+fun BackButton2(nom: String){
+    val context = LocalContext.current
+    Row (
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
+    ){
+        IconButton(
+            onClick = {
+                val iii = Intent(context, AnimalInfoActivity::class.java)
+                iii.putExtra("animal", nom)
+                context.startActivity(iii)
+            },
+        ) {
+            Icon(
+                Icons.Default.KeyboardArrowLeft,
+                contentDescription = "Back",
+                tint = Color(0xFF000000)
+            )
+        }
+        Box (
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }
