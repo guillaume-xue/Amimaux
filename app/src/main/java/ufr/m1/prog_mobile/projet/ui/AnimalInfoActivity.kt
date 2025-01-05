@@ -1,6 +1,7 @@
 package ufr.m1.prog_mobile.projet.ui
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
@@ -108,6 +109,10 @@ fun MonAnimalInfo(modifier: Modifier, model: MyViewModel) {
 //        TextAjoutActivite(texte)
 //        RadioButtonValide(ajouter)
 //        ButtonValide(context, texte, ajouter, animal.nom, selectActivite,activitesAnimals, activites, model::addActiviteAnimal, model::addActivite, model::deleteActiviteAnimal, model::deleteActivite)
+
+        if (nom != null) {
+            ButtonAjoutActi(context, nom)
+        }
     }
 }
 
@@ -172,6 +177,24 @@ fun ActiviteList(
             )
             HorizontalDivider()
         }
+    }
+}
+
+@Composable
+fun ButtonAjoutActi(
+    context: Activity,
+    nom: String
+) {
+    Button(
+        onClick = {
+            val iii = Intent(context, AjoutActivite::class.java)
+            iii.putExtra("animal", nom)
+            context.startActivity(iii)
+        },
+        modifier = Modifier
+            .padding(8.dp)
+    ) {
+        Text("Ajouter une activité")
     }
 }
 

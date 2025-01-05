@@ -99,9 +99,9 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     private val activiteAnimalDao by lazy { ActiviteAnimalBD.getDB(application).ActiviteAnimalDao() }
     private val activiteAnimalList = application.resources.getStringArray(R.array.activites_animals)
 
-    fun addActiviteAnimal(id: Int, animal: String, frequence: String) {
+    fun addActiviteAnimal(id: Int, animal: String, frequence: NotifDelay, timer: String = "00:00") {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = activiteAnimalDao.insertActiviteAnimal(ActiviteAnimal(id = id, animal = animal, frequence = frequence))
+            val result = activiteAnimalDao.insertActiviteAnimal(ActiviteAnimal(id = id, animal = animal, frequence =  frequence, timer = timer))
             if (result == -1L) {
                 withContext(Dispatchers.Main) {
                     erreurIns.value = true
@@ -113,8 +113,13 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     var activiteAnimals = activiteAnimalDao.getActiviteAnimalsPref(prefix.value)
 
     fun remplirActivitesAnimaux() {
-        for (i in activiteAnimalList.indices step 3) {
-            addActiviteAnimal(id = activiteAnimalList[i].toInt(), animal = activiteAnimalList[i+1], frequence = activiteAnimalList[i+2])
+        for (i in activiteAnimalList.indices step 4) {
+            var tmp : NotifDelay = NotifDelay.Unique    ;
+            when (activiteAnimalList[i+2]) {
+                "quotidien" -> tmp = NotifDelay.Quotidien
+                "hebdomadaire" -> tmp = NotifDelay.Hebdomadaire
+            }
+            addActiviteAnimal(id = activiteAnimalList[i].toInt(), animal = activiteAnimalList[i+1], frequence = tmp, timer = activiteAnimalList[i+3])
         }
     }
 

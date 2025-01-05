@@ -11,5 +11,7 @@ import androidx.room.PrimaryKey
 data class ActiviteAnimal(
     val id: Int,
     val animal: String,
-    val frequence: String
+    val frequence: NotifDelay,
+    val timer : String
+
 )

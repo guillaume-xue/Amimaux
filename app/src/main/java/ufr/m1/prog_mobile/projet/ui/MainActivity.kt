@@ -97,16 +97,16 @@ fun MyButton(modifier: Modifier, onClearAnimal: () -> Unit = {}, onClearActivite
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        IconButton(
-            onClick = {
-                val iii = Intent(context, AjoutActivite::class.java)
-                context.startActivity(iii)
-                      },
-            modifier = modifier
-                .padding(8.dp)
-            ) {
-            Icon(imageVector = Icons.Default.DateRange, contentDescription = "Calendrier")
-        }
+//        IconButton(
+//            onClick = {
+//                val iii = Intent(context, AjoutActivite::class.java)
+//                context.startActivity(iii)
+//                      },
+//            modifier = modifier
+//                .padding(8.dp)
+//            ) {
+//            Icon(imageVector = Icons.Default.DateRange, contentDescription = "Calendrier")
+//        }
         IconButton(
             onClick = {
                 val iii = Intent(context, AjoutAnimal::class.java)

@@ -33,6 +33,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,6 +49,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import okhttp3.internal.notifyAll
+import okhttp3.internal.wait
 import ufr.m1.prog_mobile.projet.data.Activite
 import ufr.m1.prog_mobile.projet.data.ActiviteAnimal
 import ufr.m1.prog_mobile.projet.data.Animal
@@ -72,6 +74,7 @@ class AjoutActivite : ComponentActivity() {
     }
 }
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun Greeting(modifier: Modifier, model: MyViewModel) {
 
@@ -83,39 +86,40 @@ fun Greeting(modifier: Modifier, model: MyViewModel) {
     val activiteList = remember { mutableStateListOf<String>() }
     val context = LocalContext.current
     val iii = (context as Activity).intent
-    val nom = iii.getStringExtra("animal")
-
-    val animal = animaux.find { it.nom == model.selectedAnimal.value?.nom } ?: Animal("Inconnu", "Inconnu", "Inconnu")
+    val nom = iii.getStringExtra("animal") ?: "Inconnu"
 
     val ajouter = remember { mutableStateOf(true) }
     val texte = remember { mutableStateOf("") }
 
-
-
     val selectActiviteColor = remember { mutableStateListOf<Color>() }
     val selectActivite = remember { mutableStateListOf<String>() }
 
+    activiteList.clear()
+    selectActiviteColor.clear()
     for (activiteAnimal in activitesAnimals) {
-        if (activiteAnimal.animal == animal.nom) {
+        if (activiteAnimal.animal == nom) {
             val activite = activites.find { it.id == activiteAnimal.id }
             activiteList.add(activite?.texte ?: "Inconnu")
+            selectActiviteColor.add(Color.Transparent)
         }
-        selectActiviteColor.add(Color.Transparent)
     }
+
 
     Column (modifier = modifier.padding(8.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally){
         BackButton()
+        SelectionAnimal(nom, model)
 
-        SelectionAnimal(animaux = animaux, model = model)
         ActiviteList(activiteList, selectActiviteColor, selectActivite)
         TextAjoutActivite(texte)
         DelaySelection(model)
         RadioButtonValide(ajouter)
-        ButtonValide(context, texte, ajouter, animal.nom, selectActivite,activitesAnimals, activites, model::addActiviteAnimal, model::addActivite, model::deleteActiviteAnimal, model::deleteActivite)
+        ButtonValide(model, context, texte, ajouter, nom, selectActivite,activitesAnimals, activites, model::addActiviteAnimal, model::addActivite, model::deleteActiviteAnimal, model::deleteActivite)
+
 
     }
+
 }
 
 @SuppressLint("StateFlowValueCalledInComposition", "DefaultLocale")
@@ -181,40 +185,17 @@ fun DelaySelection(model: MyViewModel){
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectionAnimal(animaux: List<Animal>, model: MyViewModel) {
-    var expanded by remember { mutableStateOf(false) }
+fun SelectionAnimal(nom: String, model: MyViewModel) {
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ) {
-        OutlinedTextField(
-            value = model.selectedAnimal.value?.nom ?: "Select Animal",
-            onValueChange = {},
-            readOnly = true,
-            label = { Text("Animal") },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor()
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            animaux.forEach { animal ->
-                DropdownMenuItem(
-                    text = { Text(text = animal.nom) },
-                    onClick = {
-                        model.selectAnimal(animal)
-                        expanded = false
-                    }
-                )
-            }
-        }
-    }
+    OutlinedTextField(
+        value = nom,
+        onValueChange = {},
+        readOnly = true,
+        label = { Text("Animal") },
+        modifier = Modifier
+            .fillMaxWidth()
+    )
+
 }
 
 @Composable
@@ -245,6 +226,7 @@ fun RadioButtonValide(ajouter: MutableState<Boolean>){
 
 @Composable
 fun ButtonValide(
+    model: MyViewModel,
     context: Activity,
     text: MutableState<String>,
     ajouter: MutableState<Boolean>,
@@ -252,10 +234,10 @@ fun ButtonValide(
     selectActivite: SnapshotStateList<String>,
     activitesAnimals: List<ActiviteAnimal>,
     activites: List<Activite>,
-    onAddActAni: (Int, String, String) -> Unit,
+    onAddActAni: (Int, String, NotifDelay, String) -> Unit,
     onAddAct: (Int?, String) -> Unit,
     onDelActAni: (Int, String) -> Unit,
-    onDelAct: (Int) -> Unit
+    onDelAct: (Int) -> Unit,
 ) {
     Button(
         onClick = {
@@ -265,7 +247,8 @@ fun ButtonValide(
                 ajouter.value -> {
                     // Ajouter
                     onAddAct(null, text.value)
-                    onAddActAni(activites.size+1, nom, "unique")
+                    onAddActAni(activites.size+1, nom, model.selectedDelayType.value, model.selectedTime.value)
+
                 }
                 !ajouter.value -> {
                     // Supprimer
@@ -313,7 +296,6 @@ fun ActiviteList(
     selectActiviteColor: SnapshotStateList<Color>,
     selectActivite: SnapshotStateList<String>
 ) {
-
     LazyColumn (
         modifier = Modifier
             .heightIn(max = 150.dp)
@@ -326,24 +308,24 @@ fun ActiviteList(
                 activite,
                 modifier = Modifier
                     .padding(8.dp)
-                    .background(selectActiviteColor[index])
-                    .clickable {
-                        selectActiviteColor[index] = if (selectActiviteColor[index] == Color.Transparent) Color(0xFFB0B0B0) else Color.Transparent
-                        if (selectActiviteColor[index] == Color.Transparent) {
-                            selectActivite.remove(activite)
-                        } else {
-                            selectActivite.add(activite)
-                        }
-                    }
+                    .background(Color.Transparent)
+//                    .clickable {
+//                        selectActiviteColor[index] = if (selectActiviteColor[index] == Color.Transparent) Color(0xFFB0B0B0) else Color.Transparent
+//                        if (selectActiviteColor[index] == Color.Transparent) {
+//                            selectActivite.remove(activite)
+//                        } else {
+//                            selectActivite.add(activite)
+//                        }
+//                    }
             )
-            if (index < activiteList.size - 1) {
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = Color.Gray
-                )
-            }
+//            if (index < activiteList.size - 1) {
+//                HorizontalDivider(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(1.dp),
+//                    color = Color.Gray
+//                )
+//            }
         }
     }
 }

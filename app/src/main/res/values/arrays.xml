@@ -19,52 +19,68 @@
     <string-array name="activites_animals">
         <item>1</item>
         <item>cat</item>
-        <item>quotidient</item>
+        <item>quotidien</item>
+        <item>12:00</item>
         <item>1</item>
         <item>dog</item>
-        <item>quotidient</item>
+        <item>quotidien</item>
+        <item>12:00</item>
         <item>1</item>
         <item>hamster</item>
-        <item>quotidient</item>
+        <item>quotidien</item>
+        <item>12:00</item>
         <item>1</item>
         <item>fish</item>
-        <item>quotidient</item>
+        <item>quotidien</item>
+        <item>12:00</item>
         <item>2</item>
         <item>cat</item>
         <item>unique</item>
+        <item>14:00</item>
         <item>2</item>
         <item>dog</item>
         <item>unique</item>
+        <item>14:00</item>
         <item>2</item>
         <item>hamster</item>
         <item>unique</item>
+        <item>14:00</item>
         <item>2</item>
         <item>fish</item>
         <item>unique</item>
+        <item>14:00</item>
         <item>3</item>
         <item>cat</item>
         <item>hebdomadaire</item>
+        <item>16:00</item>
         <item>3</item>
         <item>dog</item>
         <item>hebdomadaire</item>
+        <item>16:00</item>
         <item>3</item>
         <item>hamster</item>
         <item>hebdomadaire</item>
+        <item>16:00</item>
         <item>3</item>
         <item>fish</item>
         <item>hebdomadaire</item>
+        <item>16:00</item>
         <item>4</item>
         <item>cat</item>
         <item>hebdomadaire</item>
+        <item>18:00</item>
         <item>4</item>
         <item>dog</item>
         <item>hebdomadaire</item>
+        <item>18:00</item>
         <item>4</item>
         <item>hamster</item>
         <item>hebdomadaire</item>
+        <item>18:00</item>
         <item>4</item>
         <item>fish</item>
         <item>hebdomadaire</item>
+        <item>18:00</item>
     </string-array>
 
     <string-array name="activites">
