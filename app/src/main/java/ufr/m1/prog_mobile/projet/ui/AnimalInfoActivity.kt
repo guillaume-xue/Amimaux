@@ -208,8 +208,8 @@ fun ButtonValide(
     selectActivite: SnapshotStateList<String>,
     activitesAnimals: List<ActiviteAnimal>,
     activites: List<Activite>,
-    onAddActAni: (Int, String) -> Unit,
-    onAddAct: (Int?, String, String) -> Unit,
+    onAddActAni: (Int, String, String) -> Unit,
+    onAddAct: (Int?, String) -> Unit,
     onDelActAni: (Int, String) -> Unit,
     onDelAct: (Int) -> Unit
 ) {
@@ -220,8 +220,8 @@ fun ButtonValide(
                 selectActivite.isEmpty() && !ajouter.value -> Toast.makeText(context, "Veuillez sélectionner une activité", Toast.LENGTH_SHORT).show()
                 ajouter.value -> {
                     // Ajouter
-                    onAddAct(null, text.value, "")
-                    onAddActAni(activites.size+1, nom)
+                    onAddAct(null, text.value)
+                    onAddActAni(activites.size+1, nom, "unique")
                 }
                 !ajouter.value -> {
                     // Supprimer

@@ -57,9 +57,9 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     private val activiteList = application.resources.getStringArray(R.array.activites)
 
 
-    fun addActivite(id: Int?, texte: String, date: String) {
+    fun addActivite(id: Int?, texte: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = activiteDao.insertActivite(Activite(id = id, texte = texte, date))
+            val result = activiteDao.insertActivite(Activite(id = id, texte = texte))
             if (result == -1L) {
                 withContext(Dispatchers.Main) {
                     erreurIns.value = true
@@ -71,8 +71,8 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     var activites = activiteDao.getActivitesPref(prefix.value)
 
     fun remplirActivites() {
-        for (i in activiteList.indices step 3) {
-            addActivite(id = activiteList[i].toInt(), texte = activiteList[i+1], date = activiteList[i+2])
+        for (i in activiteList.indices step 2) {
+            addActivite(id = activiteList[i].toInt(), texte = activiteList[i+1])
         }
     }
 
@@ -93,9 +93,9 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     private val activiteAnimalDao by lazy { ActiviteAnimalBD.getDB(application).ActiviteAnimalDao() }
     private val activiteAnimalList = application.resources.getStringArray(R.array.activites_animals)
 
-    fun addActiviteAnimal(id: Int, animal: String) {
+    fun addActiviteAnimal(id: Int, animal: String, frequence: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = activiteAnimalDao.insertActiviteAnimal(ActiviteAnimal(id = id, animal = animal))
+            val result = activiteAnimalDao.insertActiviteAnimal(ActiviteAnimal(id = id, animal = animal, frequence = frequence))
             if (result == -1L) {
                 withContext(Dispatchers.Main) {
                     erreurIns.value = true
@@ -107,8 +107,8 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     var activiteAnimals = activiteAnimalDao.getActiviteAnimalsPref(prefix.value)
 
     fun remplirActivitesAnimaux() {
-        for (i in activiteAnimalList.indices step 2) {
-            addActiviteAnimal(id = activiteAnimalList[i].toInt(), animal = activiteAnimalList[i+1])
+        for (i in activiteAnimalList.indices step 3) {
+            addActiviteAnimal(id = activiteAnimalList[i].toInt(), animal = activiteAnimalList[i+1], frequence = activiteAnimalList[i+2])
         }
     }
 
