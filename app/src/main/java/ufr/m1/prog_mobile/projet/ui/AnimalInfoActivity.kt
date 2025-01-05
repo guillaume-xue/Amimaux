@@ -74,6 +74,7 @@ fun MonAnimalInfo(modifier: Modifier, model: MyViewModel) {
     val context = LocalContext.current
     val iii = (context as Activity).intent
     val nom = iii.getStringExtra("animal")
+
     val animal = animaux.find { it.nom == nom } ?: Animal("Inconnu", "Inconnu", "Inconnu")
     val ajouter = remember { mutableStateOf(true) }
     val texte = remember { mutableStateOf("") }
@@ -154,8 +155,7 @@ fun ActiviteList(
 ) {
 
     LazyColumn (
-        modifier = Modifier
-            .padding(16.dp)
+        modifier = Modifier.padding(16.dp)
     ){
         itemsIndexed(activiteList) { index, activite ->
             Text(
@@ -209,7 +209,7 @@ fun ButtonValide(
     activitesAnimals: List<ActiviteAnimal>,
     activites: List<Activite>,
     onAddActAni: (Int, String) -> Unit,
-    onAddAct: (Int?, String) -> Unit,
+    onAddAct: (Int?, String, String) -> Unit,
     onDelActAni: (Int, String) -> Unit,
     onDelAct: (Int) -> Unit
 ) {
@@ -220,7 +220,7 @@ fun ButtonValide(
                 selectActivite.isEmpty() && !ajouter.value -> Toast.makeText(context, "Veuillez sélectionner une activité", Toast.LENGTH_SHORT).show()
                 ajouter.value -> {
                     // Ajouter
-                    onAddAct(null, text.value)
+                    onAddAct(null, text.value, "")
                     onAddActAni(activites.size+1, nom)
                 }
                 !ajouter.value -> {
@@ -237,6 +237,7 @@ fun ButtonValide(
                             }
                         }
                     }
+
                 }
             }
             text.value = ""

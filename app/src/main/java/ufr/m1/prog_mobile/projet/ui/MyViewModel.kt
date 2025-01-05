@@ -57,9 +57,9 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     private val activiteList = application.resources.getStringArray(R.array.activites)
 
 
-    fun addActivite(id: Int?, texte: String) {
+    fun addActivite(id: Int?, texte: String, date: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = activiteDao.insertActivite(Activite(id = id, texte = texte))
+            val result = activiteDao.insertActivite(Activite(id = id, texte = texte, date))
             if (result == -1L) {
                 withContext(Dispatchers.Main) {
                     erreurIns.value = true
@@ -71,8 +71,8 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     var activites = activiteDao.getActivitesPref(prefix.value)
 
     fun remplirActivites() {
-        for (i in activiteList.indices step 2) {
-            addActivite(id = activiteList[i].toInt(), texte = activiteList[i+1])
+        for (i in activiteList.indices step 3) {
+            addActivite(id = activiteList[i].toInt(), texte = activiteList[i+1], date = activiteList[i+2])
         }
     }
 

@@ -54,12 +54,16 @@
     <string-array name="activites">
         <item>1</item>
         <item>Donner à manger</item>
+        <item>quotidient</item>
         <item>2</item>
         <item>aller au coiffeur</item>
+        <item>hebdomadaire</item>
         <item>3</item>
         <item>aller au vétérinaire</item>
+        <item>unique</item>
         <item>4</item>
         <item>promenade</item>
+        <item>quotidient</item>
     </string-array>
 
 </resources>
