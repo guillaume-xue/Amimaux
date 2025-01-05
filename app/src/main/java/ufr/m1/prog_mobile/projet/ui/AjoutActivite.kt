@@ -1,0 +1,287 @@
+package ufr.m1.prog_mobile.projet.ui
+
+import android.app.Activity
+import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import ufr.m1.prog_mobile.projet.data.Activite
+import ufr.m1.prog_mobile.projet.data.ActiviteAnimal
+import ufr.m1.prog_mobile.projet.data.Animal
+import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
+
+class AjoutActivite : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            val app = application as MyApplication
+            val model = app.viewModel
+            ProjetTheme {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()){
+                        innerPadding ->
+                    Greeting(modifier = Modifier.padding(innerPadding), model)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Greeting(modifier: Modifier, model: MyViewModel) {
+    val animaux by model.animals.collectAsState(listOf())
+    val activites by model.activites.collectAsState(listOf())
+    val activitesAnimals by model.activiteAnimals.collectAsState(listOf())
+
+    val animalSelect = remember { mutableStateListOf<Animal>() }
+
+    val context = LocalContext.current
+    val iii = (context as Activity).intent
+    val nom = iii.getStringExtra("animal")
+
+    val animal = animaux.find { it.nom == nom } ?: Animal("Inconnu", "Inconnu", "Inconnu")
+    val ajouter = remember { mutableStateOf(true) }
+    val texte = remember { mutableStateOf("") }
+
+    val activiteList = remember { mutableStateListOf<String>() }
+
+    val selectActiviteColor = remember { mutableStateListOf<Color>() }
+    val selectActivite = remember { mutableStateListOf<String>() }
+
+    for (activiteAnimal in activitesAnimals) {
+        if (activiteAnimal.animal == animal.nom) {
+            val activite = activites.find { it.id == activiteAnimal.id }
+            activiteList.add(activite?.texte ?: "Inconnu")
+        }
+        selectActiviteColor.add(Color.Transparent)
+    }
+
+
+
+    Column (modifier = modifier.padding(8.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally){
+        BackButton()
+//        ActiviteList(activiteList, selectActiviteColor, selectActivite)
+        SelectionAnimal(animaux = animaux, onAnimalSelected = { selectedAnimal ->
+            animalSelect.add(selectedAnimal)
+        })
+        TextAjoutActivite(texte)
+        RadioButtonValide(ajouter)
+        ButtonValide(context, texte, ajouter, animal.nom, selectActivite,activitesAnimals, activites, model::addActiviteAnimal, model::addActivite, model::deleteActiviteAnimal, model::deleteActivite)
+
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectionAnimal(animaux: List<Animal>, onAnimalSelected: (Animal) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedAnimal by remember { mutableStateOf<Animal?>(null) }
+    val context = LocalContext.current
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = selectedAnimal?.nom ?: "Select Animal",
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Animal") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            animaux.forEach { animal ->
+                DropdownMenuItem(
+                    text = { Text(text = animal.nom) },
+                    onClick = {
+                        selectedAnimal = animal
+                        expanded = false
+                        onAnimalSelected(animal)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun RadioButtonValide(ajouter: MutableState<Boolean>){
+    Row (
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ){
+        RadioButton(
+            selected = ajouter.value,
+            onClick = {
+                ajouter.value = true
+            },
+        )
+        Text(text = "Valider")
+        RadioButton(
+            selected = !ajouter.value,
+            onClick = {
+                ajouter.value = false
+            }
+        )
+        Text(text = "Supprimer")
+    }
+}
+
+@Composable
+fun ButtonValide(
+    context: Activity,
+    text: MutableState<String>,
+    ajouter: MutableState<Boolean>,
+    nom: String,
+    selectActivite: SnapshotStateList<String>,
+    activitesAnimals: List<ActiviteAnimal>,
+    activites: List<Activite>,
+    onAddActAni: (Int, String, String) -> Unit,
+    onAddAct: (Int?, String) -> Unit,
+    onDelActAni: (Int, String) -> Unit,
+    onDelAct: (Int) -> Unit
+) {
+    Button(
+        onClick = {
+            when {
+                text.value == "" && ajouter.value -> Toast.makeText(context, "Veuillez entrer une activité", Toast.LENGTH_SHORT).show()
+                selectActivite.isEmpty() && !ajouter.value -> Toast.makeText(context, "Veuillez sélectionner une activité", Toast.LENGTH_SHORT).show()
+                ajouter.value -> {
+                    // Ajouter
+                    onAddAct(null, text.value)
+                    onAddActAni(activites.size+1, nom, "unique")
+                }
+                !ajouter.value -> {
+                    // Supprimer
+                    for (select in selectActivite) {
+                        val activite = activites.find { it.texte == select }
+                        val activiteAnimal = activitesAnimals.find { it.id == activite?.id && it.animal == nom }
+                        if (activiteAnimal != null) {
+                            onDelActAni(activiteAnimal.id, nom)
+                            if (activite != null) {
+                                if(activite.id!! > 4){
+                                    onDelAct(activite.id)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            text.value = ""
+        },
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+    ) {
+        Text("Valider")
+    }
+}
+
+@Composable
+fun TextAjoutActivite(texte: MutableState<String>){
+    OutlinedTextField(
+        value = texte.value,
+        onValueChange = {texte.value = it},
+        label = { Text("Ajouter une activité") },
+        modifier = Modifier
+            .padding(8.dp)
+            .height(60.dp)
+            .fillMaxWidth()
+
+    )
+}
+
+@Composable
+fun ActiviteList(
+    activiteList: SnapshotStateList<String>,
+    selectActiviteColor: SnapshotStateList<Color>,
+    selectActivite: SnapshotStateList<String>
+) {
+
+    LazyColumn (
+        modifier = Modifier
+            .heightIn(max = 150.dp)
+            .padding(8.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ){
+        itemsIndexed(activiteList) { index, activite ->
+            Text(
+                activite,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .background(selectActiviteColor[index])
+                    .clickable {
+                        selectActiviteColor[index] = if (selectActiviteColor[index] == Color.Transparent) Color(0xFFB0B0B0) else Color.Transparent
+                        if (selectActiviteColor[index] == Color.Transparent) {
+                            selectActivite.remove(activite)
+                        } else {
+                            selectActivite.add(activite)
+                        }
+                    }
+            )
+            if (index < activiteList.size - 1) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp),
+                    color = Color.Gray
+                )
+            }
+        }
+    }
+}

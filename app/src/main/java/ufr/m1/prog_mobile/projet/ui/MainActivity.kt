@@ -43,9 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import ufr.m1.prog_mobile.projet.data.Animal
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
 
@@ -100,7 +98,10 @@ fun MyButton(modifier: Modifier, onClearAnimal: () -> Unit = {}, onClearActivite
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         IconButton(
-            onClick = {  },
+            onClick = {
+                val iii = Intent(context, AjoutActivite::class.java)
+                context.startActivity(iii)
+                      },
             modifier = modifier
                 .padding(8.dp)
             ) {

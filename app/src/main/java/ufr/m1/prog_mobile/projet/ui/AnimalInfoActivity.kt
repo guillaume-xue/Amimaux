@@ -103,10 +103,11 @@ fun MonAnimalInfo(modifier: Modifier, model: MyViewModel) {
         BackButton()
         AnimalImage(animal)
         AnimalInfo(animal)
-        ActiviteList(activiteList, selectActiviteColor, selectActivite)
-        TextAjoutActivite(texte)
-        RadioButtonValide(ajouter)
-        ButtonValide(context, texte, ajouter, animal.nom, selectActivite,activitesAnimals, activites, model::addActiviteAnimal, model::addActivite, model::deleteActiviteAnimal, model::deleteActivite)
+        ActiviteList(activiteList)
+//        ActiviteList(activiteList, selectActiviteColor, selectActivite)
+//        TextAjoutActivite(texte)
+//        RadioButtonValide(ajouter)
+//        ButtonValide(context, texte, ajouter, animal.nom, selectActivite,activitesAnimals, activites, model::addActiviteAnimal, model::addActivite, model::deleteActiviteAnimal, model::deleteActivite)
     }
 }
 
@@ -153,13 +154,11 @@ fun AnimalImage(animal: Animal) {
 @Composable
 fun ActiviteList(
     activiteList: SnapshotStateList<String>,
-    selectActiviteColor: SnapshotStateList<Color>,
-    selectActivite: SnapshotStateList<String>
 ) {
 
     LazyColumn (
         modifier = Modifier
-            .heightIn(max = 150.dp)
+            .heightIn(max = 400.dp)
             .padding(8.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -169,118 +168,14 @@ fun ActiviteList(
                 activite,
                 modifier = Modifier
                     .padding(8.dp)
-                    .background(selectActiviteColor[index])
-                    .clickable {
-                        selectActiviteColor[index] = if (selectActiviteColor[index] == Color.Transparent) Color(0xFFB0B0B0) else Color.Transparent
-                        if (selectActiviteColor[index] == Color.Transparent) {
-                            selectActivite.remove(activite)
-                        } else {
-                            selectActivite.add(activite)
-                        }
-                    }
+                    .background(Color.Transparent)
             )
-            if (index < activiteList.size - 1) {
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp),
-                    color = Color.Gray
-                )
-            }
+            HorizontalDivider()
         }
     }
-
 }
 
-@Composable
-fun TextAjoutActivite(texte: MutableState<String>){
-    OutlinedTextField(
-        value = texte.value,
-        onValueChange = {texte.value = it},
-        label = { Text("Ajouter une activité") },
-        modifier = Modifier
-            .padding(8.dp)
-            .height(60.dp)
-            .fillMaxWidth()
-
-    )
-}
-
-@Composable
-fun ButtonValide(
-    context: Activity,
-    text: MutableState<String>,
-    ajouter: MutableState<Boolean>,
-    nom: String,
-    selectActivite: SnapshotStateList<String>,
-    activitesAnimals: List<ActiviteAnimal>,
-    activites: List<Activite>,
-    onAddActAni: (Int, String, String) -> Unit,
-    onAddAct: (Int?, String) -> Unit,
-    onDelActAni: (Int, String) -> Unit,
-    onDelAct: (Int) -> Unit
-) {
-    Button(
-        onClick = {
-            when {
-                text.value == "" && ajouter.value -> Toast.makeText(context, "Veuillez entrer une activité", Toast.LENGTH_SHORT).show()
-                selectActivite.isEmpty() && !ajouter.value -> Toast.makeText(context, "Veuillez sélectionner une activité", Toast.LENGTH_SHORT).show()
-                ajouter.value -> {
-                    // Ajouter
-                    onAddAct(null, text.value)
-                    onAddActAni(activites.size+1, nom, "unique")
-                }
-                !ajouter.value -> {
-                    // Supprimer
-                    for (select in selectActivite) {
-                        val activite = activites.find { it.texte == select }
-                        val activiteAnimal = activitesAnimals.find { it.id == activite?.id && it.animal == nom }
-                        if (activiteAnimal != null) {
-                            onDelActAni(activiteAnimal.id, nom)
-                            if (activite != null) {
-                                if(activite.id!! > 4){
-                                    onDelAct(activite.id)
-                                }
-                            }
-                        }
-                    }
-
-                }
-            }
-            text.value = ""
-        },
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-    ) {
-        Text("Valider")
-    }
-}
-
-@Composable
-fun RadioButtonValide(ajouter: MutableState<Boolean>){
-    Row (
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ){
-        RadioButton(
-            selected = ajouter.value,
-            onClick = {
-                ajouter.value = true
-            },
-        )
-        Text(text = "Valider")
-        RadioButton(
-            selected = !ajouter.value,
-            onClick = {
-                ajouter.value = false
-            }
-        )
-        Text(text = "Supprimer")
-    }
 
 
-}
+
+
