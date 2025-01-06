@@ -3,4 +3,5 @@
     <string name="title_activity_ajout">AjoutActivity</string>
     <string name="title_activity_animal_info">AnimalInfoActivity</string>
     <string name="title_activity_ajout_activite">AjoutActivite</string>
+    <string name="title_activity_supprime_animal">SupprimeAnimal</string>
 </resources>

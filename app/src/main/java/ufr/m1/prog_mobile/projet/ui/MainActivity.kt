@@ -122,9 +122,8 @@ fun MyButton(modifier: Modifier, onClearAnimal: () -> Unit = {}, onClearActivite
         }
         IconButton(
             onClick = {
-                onClearAnimal()
-                onClearActivite()
-                onClearActiviteAnimal()
+                val iii = Intent(context, SupprimeAnimal::class.java)
+                context.startActivity(iii)
                       },
             modifier = modifier
                 .padding(8.dp)

@@ -123,8 +123,6 @@ fun Greeting(modifier: Modifier, model: MyViewModel) {
         DelaySelection(model)
         RadioButtonValide(ajouter)
         ButtonValide(model, context, texte, ajouter, nom, selectActivite,activitesAnimals, activites, model::addActiviteAnimal, model::addActivite, model::deleteActiviteAnimal, model::deleteActivite)
-
-
     }
 
 }
