@@ -57,6 +57,12 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun deleteAnimal(nom: String) {
+        viewModelScope.launch {
+            animalDao.deleteAnimal(nom)
+        }
+    }
+
     // ActiviteDao
 
     private val activiteDao by lazy { ActiviteBD.getDB(application).ActiviteDao() }
@@ -132,6 +138,12 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteActiviteAnimal(id: Int, animal: String) {
         viewModelScope.launch {
             activiteAnimalDao.deleteActiviteAnimal(id, animal)
+        }
+    }
+
+    fun deleteActiviteAnimalByAnimal(animal: String) {
+        viewModelScope.launch {
+            activiteAnimalDao.deleteActiviteAnimalByAnimal(animal)
         }
     }
 

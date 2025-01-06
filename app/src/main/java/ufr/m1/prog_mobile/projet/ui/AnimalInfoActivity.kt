@@ -11,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,9 +21,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
@@ -43,7 +49,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import ufr.m1.prog_mobile.projet.data.Activite
 import ufr.m1.prog_mobile.projet.data.ActiviteAnimal
@@ -60,8 +68,7 @@ class AnimalInfoActivity : ComponentActivity() {
             val model = app.viewModel
             ProjetTheme {
                 Scaffold(
-                    modifier = Modifier.fillMaxSize()){
-                    innerPadding ->
+                    modifier = Modifier.fillMaxSize()){ innerPadding ->
                     MonAnimalInfo(modifier = Modifier.padding(innerPadding), model)
                 }
             }
@@ -80,20 +87,18 @@ fun MonAnimalInfo(modifier: Modifier, model: MyViewModel) {
     val nom = iii.getStringExtra("animal")
 
     val animal = animaux.find { it.nom == nom } ?: Animal("Inconnu", "Inconnu", "Inconnu")
-    val ajouter = remember { mutableStateOf(true) }
-    val texte = remember { mutableStateOf("") }
 
     val activiteList = remember { mutableStateListOf<String>() }
     val activiteDelay = remember { mutableStateListOf<NotifDelay>() }
     val activiteTime = remember { mutableStateListOf<String>() }
 
     val selectActiviteColor = remember { mutableStateListOf<Color>() }
-    val selectActivite = remember { mutableStateListOf<String>() }
 
     activiteList.clear()
     activiteDelay.clear()
     activiteTime.clear()
     selectActiviteColor.clear()
+
     for (activiteAnimal in activitesAnimals) {
         if (activiteAnimal.animal == nom) {
             val activite = activites.find { it.id == activiteAnimal.id }
@@ -105,34 +110,37 @@ fun MonAnimalInfo(modifier: Modifier, model: MyViewModel) {
     }
 
     Column (
-        modifier = modifier.padding(8.dp),
         verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
-
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxSize()
     ){
         BackButton()
         AnimalImage(animal)
-        AnimalInfo(animal)
-        ActiviteList(activiteList, activiteDelay, activiteTime)
+        AnimalInfo(modifier, animal)
+        ActiviteList(modifier = Modifier.weight(1f), activiteList, activiteDelay, activiteTime)
 //        ActiviteList(activiteList, selectActiviteColor, selectActivite)
 //        TextAjoutActivite(texte)
 //        RadioButtonValide(ajouter)
 //        ButtonValide(context, texte, ajouter, animal.nom, selectActivite,activitesAnimals, activites, model::addActiviteAnimal, model::addActivite, model::deleteActiviteAnimal, model::deleteActivite)
 
         if (nom != null) {
-            ButtonAjoutActi(context, nom)
+            ButtonAjoutActi(modifier = Modifier, context = context, nom = nom)
         }
     }
 }
 
 @Composable
-fun AnimalInfo(animal: Animal) {
+fun AnimalInfo(modifier: Modifier, animal: Animal) {
     Column (
         verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp)
     ){
-        Text("Nom : " + animal.nom)
-        Text("Espèce : " + animal.espece)
+        Text("Nom : " + animal.nom, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Text("Espèce : " + animal.espece, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.Gray)
     }
 }
 
@@ -158,56 +166,89 @@ fun AnimalImage(animal: Animal) {
                 .padding(8.dp)
                 .size(300.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .clickable {
-
-                }
         )
     }
 }
 
 @Composable
 fun ActiviteList(
+    modifier: Modifier,
     activiteList: SnapshotStateList<String>,
     activiteDelay: SnapshotStateList<NotifDelay>,
     activiteTime: SnapshotStateList<String>
 ) {
-
-    LazyColumn (
-        modifier = Modifier
-            .heightIn(max = 250.dp)
-            .padding(8.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Column (
+        modifier = modifier.verticalScroll(rememberScrollState())
     ){
-        itemsIndexed(activiteList) { index, activite ->
-            val text = activite + " : " + activiteDelay[index].name + " " + activiteTime[index]
-            Text(
-                text,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .background(Color.Transparent)
-            )
-            HorizontalDivider()
-        }
+        LazyColumn (
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(32.dp)
+        ){
+            itemsIndexed(activiteList) { index, activite ->
+                Row (
+                    modifier = modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ){
+                    Text(
+                        activite,
+                        modifier = modifier
+                            .padding(2.dp)
+                            .fillMaxWidth(),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        activiteDelay[index].name,
+                        modifier = modifier
+                            .padding(2.dp)
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.CenterHorizontally),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        activiteTime[index],
+                        modifier = modifier
+                            .padding(2.dp)
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.End),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                HorizontalDivider()
+            }
+    }
+
     }
 }
 
 @Composable
 fun ButtonAjoutActi(
+    modifier: Modifier,
     context: Activity,
     nom: String
 ) {
+
     Button(
         onClick = {
             val iii = Intent(context, AjoutActivite::class.java)
             iii.putExtra("animal", nom)
             context.startActivity(iii)
         },
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
     ) {
         Text("Ajouter une activité")
     }
+
 }
 
 

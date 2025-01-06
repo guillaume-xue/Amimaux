@@ -1,13 +1,8 @@
 package ufr.m1.prog_mobile.projet.ui
 
-import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,9 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,9 +19,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,11 +33,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,20 +47,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import coil.compose.rememberAsyncImagePainter
+import ufr.m1.prog_mobile.projet.R
 import ufr.m1.prog_mobile.projet.data.Animal
 import ufr.m1.prog_mobile.projet.data.NotifDelay
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
-import java.text.SimpleDateFormat
-import java.time.Duration
 import java.time.LocalTime
-import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var boo = false;
@@ -103,44 +89,29 @@ class MainActivity : ComponentActivity() {
 fun MonMenu(modifier: Modifier, model: MyViewModel) {
     val animaux by model.animals.collectAsState(listOf())
 
-
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color(0xFFE0E0E0)),
+            .padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = modifier.padding(100.dp)
-        )
         ImageScrollView(modifier = Modifier.weight(1f), animaux)
-        MyButton(modifier = Modifier.align(Alignment.End), onClearAnimal = model::clearDatabaseAnimal, model::clearDatabaseActivite, model::clearDatabaseActiviteAnimal)
+        MyButton(modifier = Modifier.align(Alignment.End))
     }
 }
 
 @Composable
-fun MyButton(modifier: Modifier, onClearAnimal: () -> Unit = {}, onClearActivite: () -> Unit = {}, onClearActiviteAnimal: () -> Unit = {}) {
+fun MyButton(modifier: Modifier) {
     val context = LocalContext.current
     Row (
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
             .clip(RoundedCornerShape(50))
             .background(Color(0x48B0B0B0)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-//        IconButton(
-//            onClick = {
-//                val iii = Intent(context, AjoutActivite::class.java)
-//                context.startActivity(iii)
-//                      },
-//            modifier = modifier
-//                .padding(8.dp)
-//            ) {
-//            Icon(imageVector = Icons.Default.DateRange, contentDescription = "Calendrier")
-//        }
         IconButton(
             onClick = {
                 val iii = Intent(context, AjoutAnimal::class.java)
@@ -155,9 +126,8 @@ fun MyButton(modifier: Modifier, onClearAnimal: () -> Unit = {}, onClearActivite
         }
         IconButton(
             onClick = {
-                onClearAnimal()
-                onClearActivite()
-                onClearActiviteAnimal()
+                val iii = Intent(context, SupprimeAnimal::class.java)
+                context.startActivity(iii)
                       },
             modifier = modifier
                 .padding(8.dp)
@@ -172,9 +142,9 @@ fun ImageScrollView(modifier: Modifier, animaux: List<Animal>) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
-    Row(
+    Column(
         modifier = modifier
-            .horizontalScroll(scrollState)
+            .verticalScroll(scrollState)
             .padding(16.dp)
     ) {
         for (animal in animaux) {
@@ -190,6 +160,19 @@ fun ImageScrollView(modifier: Modifier, animaux: List<Animal>) {
                             .clickable {
                                 val iii = Intent(context, AnimalInfoActivity::class.java)
                                 iii.putExtra("animal", animal.nom)
+                                context.startActivity(iii)
+                            }
+                    )
+                } else if(photo == ""){
+                    Image(
+                        painter = painterResource(id = R.drawable.photo),
+                        contentDescription = "Ajouter",
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .size(300.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable {
+                                val iii = Intent(context, AjoutAnimal::class.java)
                                 context.startActivity(iii)
                             }
                     )
@@ -224,8 +207,10 @@ fun MonTopBar() = TopAppBar(
             Text("Amimaux", style = MaterialTheme.typography.displayMedium)
         }
     },
-    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
-    modifier = Modifier.fillMaxWidth(),
+    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFFFFFFF)),
+    modifier = Modifier
+        .fillMaxWidth()
+        .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
 )
 
 @Composable
@@ -280,15 +265,14 @@ fun calculateDelayInMillis(timeString: String, days: Int? = null): Long {
     val time = timeString.split(":")
     val targetHour = time[0].toInt()
     val targetMinute = time[1].toInt()
-//    Toast.makeText(LocalContext.current, "targetHour: $targetHour", Toast.LENGTH_SHORT).show()
-//    Toast.makeText(LocalContext.current, "targetMinute: $targetMinute", Toast.LENGTH_SHORT).show()
+
 // Heure actuelle
     val now = LocalTime.now()
     val nowInSeconds = now.hour * 3600 + now.minute * 60 + now.second
-//    Toast.makeText(LocalContext.current, "nowInSeconds: $nowInSeconds", Toast.LENGTH_SHORT).show()
+
 // Heure cible
     val targetInSeconds = targetHour * 3600 + targetMinute * 60
-//    Toast.makeText(LocalContext.current, "targetInSeconds: $targetInSeconds", Toast.LENGTH_SHORT).show()
+
 // Calculer la durée entre maintenant et l'heure cible
     val durationInSeconds = if (nowInSeconds < targetInSeconds) {
         targetInSeconds - nowInSeconds
@@ -296,7 +280,6 @@ fun calculateDelayInMillis(timeString: String, days: Int? = null): Long {
         // Si l'heure cible est déjà passée aujourd'hui, ajouter 24 heures
         targetInSeconds + 86400 - nowInSeconds
     }
-
 // Retourner la durée en secondes
     return durationInSeconds.toLong()
 }

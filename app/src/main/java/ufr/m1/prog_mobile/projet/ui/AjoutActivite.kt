@@ -126,8 +126,6 @@ fun Greeting(modifier: Modifier, model: MyViewModel) {
         TimerButton(model)
         RadioButtonValide(ajouter)
         ButtonValide(model, context, texte, ajouter, nom, selectActivite,activitesAnimals, activites, model::addActiviteAnimal, model::addActivite, model::deleteActiviteAnimal, model::deleteActivite)
-
-
     }
 
 }
