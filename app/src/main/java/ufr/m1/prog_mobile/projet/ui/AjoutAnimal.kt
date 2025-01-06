@@ -170,7 +170,7 @@ fun EntreText(
                     if (activity.selectedImageUri != null) {
                         onAddAnimal(nom, espece, activity.selectedImageUri.toString())
                     }else{
-                        onAddAnimal(nom, espece, null)
+                        onAddAnimal(nom, espece, "")
                     }
 
                     onAddActiviteAnimal(1, nom, NotifDelay.Quotidien, "12:00")

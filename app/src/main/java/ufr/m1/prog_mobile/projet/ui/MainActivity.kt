@@ -47,6 +47,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import coil.compose.rememberAsyncImagePainter
+import ufr.m1.prog_mobile.projet.R
 import ufr.m1.prog_mobile.projet.data.Animal
 import ufr.m1.prog_mobile.projet.data.NotifDelay
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
@@ -93,12 +94,12 @@ fun MonMenu(modifier: Modifier, model: MyViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ImageScrollView(modifier = Modifier.weight(1f), animaux)
-        MyButton(modifier = Modifier.align(Alignment.End), onClearAnimal = model::clearDatabaseAnimal, model::clearDatabaseActivite, model::clearDatabaseActiviteAnimal)
+        MyButton(modifier = Modifier.align(Alignment.End))
     }
 }
 
 @Composable
-fun MyButton(modifier: Modifier, onClearAnimal: () -> Unit = {}, onClearActivite: () -> Unit = {}, onClearActiviteAnimal: () -> Unit = {}) {
+fun MyButton(modifier: Modifier) {
     val context = LocalContext.current
     Row (
         modifier = modifier
@@ -156,6 +157,19 @@ fun ImageScrollView(modifier: Modifier, animaux: List<Animal>) {
                             .clickable {
                                 val iii = Intent(context, AnimalInfoActivity::class.java)
                                 iii.putExtra("animal", animal.nom)
+                                context.startActivity(iii)
+                            }
+                    )
+                } else if(photo == ""){
+                    Image(
+                        painter = painterResource(id = R.drawable.photo),
+                        contentDescription = "Ajouter",
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .size(300.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable {
+                                val iii = Intent(context, AjoutAnimal::class.java)
                                 context.startActivity(iii)
                             }
                     )
