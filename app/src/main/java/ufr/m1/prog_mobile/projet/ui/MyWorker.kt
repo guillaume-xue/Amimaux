@@ -23,30 +23,7 @@ class MyWorker(context: Context, workerParams: WorkerParameters) : Worker(contex
         return Result.success()
     }
 
-
-    fun scheduleOneTimeNotification(context: Context, delayInMillis: Long) {
-        val workRequest = OneTimeWorkRequestBuilder<MyWorker>()
-            .setInitialDelay(delayInMillis, TimeUnit.SECONDS)
-            .build()
-        WorkManager.getInstance(context).enqueue(workRequest)
-    }
-
-
-    fun scheduleDailyNotification(context: Context, delayInMillis: Long) {
-        val workRequest = PeriodicWorkRequestBuilder<MyWorker>(1, TimeUnit.DAYS)
-            .setInitialDelay(delayInMillis, TimeUnit.SECONDS)
-            .build()
-        WorkManager.getInstance(context).enqueue(workRequest)
-    }
-
-    fun scheduleWeeklyNotification(context: Context, delayInMillis: Long) {
-        val workRequest = PeriodicWorkRequestBuilder<MyWorker>(7, TimeUnit.DAYS)
-            .setInitialDelay(delayInMillis, TimeUnit.SECONDS)
-            .build()
-        WorkManager.getInstance(context).enqueue(workRequest)
-    }
-
-    fun showNotification(title: String, message: String) {
+    private fun showNotification(title: String, message: String) {
         val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelId = "notification_channel"
 

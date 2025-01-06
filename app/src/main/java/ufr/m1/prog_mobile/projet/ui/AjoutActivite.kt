@@ -246,6 +246,9 @@ fun ButtonValide(
     onDelActAni: (Int, String) -> Unit,
     onDelAct: (Int) -> Unit,
 ) {
+    var tmp = false;
+    var tmp2 = false;
+    var tmp4 = -1;
     Button(
         onClick = {
             when {
@@ -255,7 +258,7 @@ fun ButtonValide(
                     // Ajouter
                     onAddAct(null, text.value)
                     onAddActAni(activites.size+1, nom, model.selectedDelayType.value, model.selectedTime.value)
-
+                    tmp = true
                 }
                 !ajouter.value -> {
                     // Supprimer
@@ -264,10 +267,13 @@ fun ButtonValide(
                         val activiteAnimal = activitesAnimals.find { it.id == activite?.id && it.animal == nom }
                         if (activiteAnimal != null) {
                             onDelActAni(activiteAnimal.id, nom)
+                            tmp2 = true
+                            tmp4 = activiteAnimal.id
                             if (activite != null) {
                                 if(activite.id!! > 4){
                                     onDelAct(activite.id)
                                 }
+
                             }
                         }
                     }
@@ -280,6 +286,15 @@ fun ButtonValide(
             .fillMaxWidth()
     ) {
         Text("Valider")
+    }
+    if(tmp){
+        NotifAdd(model, nom, text.value)
+        tmp = false
+    }
+    if(tmp2){
+        Toast.makeText(context, "Activité supprimée", Toast.LENGTH_SHORT).show()
+        RemoveActiNotif(model, nom, tmp4)
+        tmp2 = false
     }
 }
 

@@ -174,7 +174,7 @@ fun ActiviteList(
 
     LazyColumn (
         modifier = Modifier
-            .heightIn(max = 400.dp)
+            .heightIn(max = 250.dp)
             .padding(8.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,

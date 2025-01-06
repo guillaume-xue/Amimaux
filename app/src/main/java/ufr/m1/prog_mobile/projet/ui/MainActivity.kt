@@ -1,5 +1,6 @@
 package ufr.m1.prog_mobile.projet.ui
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -52,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -68,10 +70,11 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var boo = false;
-        var work : MyWorker
+
 
         val requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -85,13 +88,14 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(Unit) {
                 model.initializeData()
             }
-            notif(model)
+            Notif(model)
             ProjetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize(), topBar = { MonTopBar() }) { innerPadding ->
                     MonMenu(modifier = Modifier.padding(innerPadding), model = model)
                 }
             }
         }
+
     }
 }
 
@@ -225,7 +229,7 @@ fun MonTopBar() = TopAppBar(
 )
 
 @Composable
-fun notif(model : MyViewModel){
+fun Notif(model : MyViewModel) {
     val vm = WorkManager.getInstance(context = LocalContext.current)
     val activitesAnimals by model.activiteAnimals.collectAsState(listOf())
     val activites by model.activites.collectAsState(listOf())
@@ -234,7 +238,7 @@ fun notif(model : MyViewModel){
             NotifDelay.Unique -> {
                 val data = workDataOf(
                     "animal" to activiteAnimal.animal,
-                    "activite" to activites.find { it.id == activiteAnimal.id }?.texte
+                    "activite" to activites.find { it.id == activiteAnimal.id }?.texte,
                 )
                 val workRequest = OneTimeWorkRequestBuilder<MyWorker>()
                     .setInitialDelay(calculateDelayInMillis(activiteAnimal.timer), TimeUnit.SECONDS)
@@ -295,3 +299,57 @@ fun calculateDelayInMillis(timeString: String, days: Int? = null): Long {
     return durationInSeconds.toLong()
 }
 
+
+@Composable
+fun NotifAdd(model: MyViewModel, animal: String, activite: String){
+    val vm = WorkManager.getInstance(context = LocalContext.current)
+    val activitesAnimals by model.activiteAnimals.collectAsState(listOf())
+    val activites by model.activites.collectAsState(listOf())
+    val activiteSearch = activites.find { it.texte == activite } ?: return
+    val activiteAnimal = activitesAnimals.find { it.animal == animal && it.id == activiteSearch.id } ?: return
+    when (activiteAnimal.frequence) {
+        NotifDelay.Unique -> {
+            val data = workDataOf(
+                "animal" to activiteAnimal.animal,
+                "activite" to activites.find { it.id == activiteAnimal.id }?.texte
+            )
+            val workRequest = OneTimeWorkRequestBuilder<MyWorker>()
+                .setInitialDelay(calculateDelayInMillis(activiteAnimal.timer), TimeUnit.SECONDS)
+                .setInputData(data)
+                .addTag(activiteAnimal.animal + "_" + activiteAnimal.id)
+                .build()
+            vm.enqueue(workRequest)
+        }
+        NotifDelay.Quotidien -> {
+            val data = workDataOf(
+                "animal" to activiteAnimal.animal,
+                "activite" to activites.find { it.id == activiteAnimal.id }?.texte
+            )
+            val workRequest = PeriodicWorkRequestBuilder<MyWorker>(1, TimeUnit.DAYS)
+                .setInitialDelay(calculateDelayInMillis(activiteAnimal.timer, 1), TimeUnit.SECONDS)
+                .setInputData(data)
+                .addTag(activiteAnimal.animal + "_" + activiteAnimal.id)
+                .build()
+            vm.enqueue(workRequest)
+        }
+        NotifDelay.Hebdomadaire -> {
+            val data = workDataOf(
+                "animal" to activiteAnimal.animal,
+                "activite" to activites.find { it.id == activiteAnimal.id }?.texte
+            )
+            val workRequest = PeriodicWorkRequestBuilder<MyWorker>(7, TimeUnit.DAYS)
+                .setInitialDelay(calculateDelayInMillis(activiteAnimal.timer, 7), TimeUnit.SECONDS)
+                .setInputData(data)
+                .addTag(activiteAnimal.animal + "_" + activiteAnimal.id)
+                .build()
+            vm.enqueue(workRequest)
+        }
+    }
+}
+
+@Composable
+fun RemoveActiNotif(model: MyViewModel, animal: String, actID: Int){
+    val vm = WorkManager.getInstance(context = LocalContext.current)
+    vm.cancelAllWorkByTag(animal + "_" + actID)
+    Toast.makeText(LocalContext.current, "Notification supprimée", Toast.LENGTH_SHORT).show()
+}
