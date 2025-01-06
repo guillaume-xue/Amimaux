@@ -27,4 +27,7 @@ interface ActiviteAnimalDao {
 
     @Query("DELETE FROM ActiviteAnimal WHERE id = :id AND animal = :animal")
     suspend fun deleteActiviteAnimal(id: Int, animal: String)
+
+    @Query("DELETE FROM ActiviteAnimal WHERE animal = :animal")
+    suspend fun deleteActiviteAnimalByAnimal(animal: String)
 }

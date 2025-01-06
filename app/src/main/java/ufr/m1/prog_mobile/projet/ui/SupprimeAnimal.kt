@@ -117,7 +117,11 @@ fun ButtonValidSuppr(modifier: Modifier, model: MyViewModel, select: String){
         onClick = {
             when(select){
                 "" -> Toast.makeText(context, "Veuillez selectionner un animal", Toast.LENGTH_SHORT).show()
-                else -> model.deleteAnimal(select)
+                else -> {
+                    model.deleteAnimal(select)
+                    model.deleteActiviteAnimalByAnimal(select)
+                }
+
             }
             val iii = Intent(context, MainActivity::class.java)
             context.startActivity(iii)

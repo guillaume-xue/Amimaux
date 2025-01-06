@@ -141,6 +141,12 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun deleteActiviteAnimalByAnimal(animal: String) {
+        viewModelScope.launch {
+            activiteAnimalDao.deleteActiviteAnimalByAnimal(animal)
+        }
+    }
+
     fun initializeData() {
         if (!isInitialized) {
             remplirAnimaux()
