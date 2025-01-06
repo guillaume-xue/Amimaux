@@ -190,7 +190,6 @@ fun DelaySelection(model: MyViewModel){
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectionAnimal(nom: String, model: MyViewModel) {
 

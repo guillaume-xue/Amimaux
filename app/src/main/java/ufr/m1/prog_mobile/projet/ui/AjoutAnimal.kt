@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,12 +41,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import ufr.m1.prog_mobile.projet.R
 import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
 import coil.compose.rememberImagePainter
+import ufr.m1.prog_mobile.projet.data.NotifDelay
+import kotlin.reflect.KFunction4
 
 class AjoutAnimal : ComponentActivity() {
     var selectedImageUri: Uri? = null
@@ -98,7 +97,7 @@ fun MonAjoutPreview(model: MyViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         BackButton()
-        EntreText(onAddAnimal = model::addAnimal)
+        EntreText(onAddAnimal = model::addAnimal, onAddActiviteAnimal = model::addActiviteAnimal)
         Box (
             modifier = Modifier.padding(8.dp)
         )
@@ -107,7 +106,9 @@ fun MonAjoutPreview(model: MyViewModel) {
 
 
 @Composable
-fun EntreText(onAddAnimal: (String, String, String?) -> Unit){
+fun EntreText(
+    onAddAnimal: (String, String, String?) -> Unit,
+    onAddActiviteAnimal: (Int, String, NotifDelay, String) -> Unit){
     val context = LocalContext.current
     var nom by remember { mutableStateOf("") }
     var espece by remember { mutableStateOf("") }
@@ -166,7 +167,16 @@ fun EntreText(onAddAnimal: (String, String, String?) -> Unit){
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    onAddAnimal(nom, espece, activity.selectedImageUri.toString())
+                    if (activity.selectedImageUri != null) {
+                        onAddAnimal(nom, espece, activity.selectedImageUri.toString())
+                    }else{
+                        onAddAnimal(nom, espece, null)
+                    }
+
+                    onAddActiviteAnimal(1, nom, NotifDelay.Quotidien, "12:00")
+                    when (espece) {
+                        "chien" -> onAddActiviteAnimal(4, nom, NotifDelay.Quotidien, "12:00")
+                    }
                 }
             },
             modifier = Modifier
