@@ -79,11 +79,9 @@ class AjoutActivite : ComponentActivity() {
 @Composable
 fun Greeting(modifier: Modifier, model: MyViewModel) {
 
-    val animaux by model.animals.collectAsState(listOf())
     val activites by model.activites.collectAsState(listOf())
     val activitesAnimals by model.activiteAnimals.collectAsState(listOf())
 
-    val animalSelect = remember { mutableStateListOf<Animal>() }
     val activiteList = remember { mutableStateListOf<String>() }
     val activiteDelay = remember { mutableStateListOf<NotifDelay>() }
     val activiteTime = remember { mutableStateListOf<String>() }
@@ -114,7 +112,7 @@ fun Greeting(modifier: Modifier, model: MyViewModel) {
     }
 
 
-    Column (modifier = modifier.padding(8.dp),
+    Column (modifier = modifier.padding(16.dp).fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally){
         BackButton2(nom)
