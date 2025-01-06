@@ -280,14 +280,15 @@ fun calculateDelayInMillis(timeString: String, days: Int? = null): Long {
     val time = timeString.split(":")
     val targetHour = time[0].toInt()
     val targetMinute = time[1].toInt()
-
+//    Toast.makeText(LocalContext.current, "targetHour: $targetHour", Toast.LENGTH_SHORT).show()
+//    Toast.makeText(LocalContext.current, "targetMinute: $targetMinute", Toast.LENGTH_SHORT).show()
 // Heure actuelle
     val now = LocalTime.now()
     val nowInSeconds = now.hour * 3600 + now.minute * 60 + now.second
-
+//    Toast.makeText(LocalContext.current, "nowInSeconds: $nowInSeconds", Toast.LENGTH_SHORT).show()
 // Heure cible
     val targetInSeconds = targetHour * 3600 + targetMinute * 60
-
+//    Toast.makeText(LocalContext.current, "targetInSeconds: $targetInSeconds", Toast.LENGTH_SHORT).show()
 // Calculer la durée entre maintenant et l'heure cible
     val durationInSeconds = if (nowInSeconds < targetInSeconds) {
         targetInSeconds - nowInSeconds
@@ -295,6 +296,7 @@ fun calculateDelayInMillis(timeString: String, days: Int? = null): Long {
         // Si l'heure cible est déjà passée aujourd'hui, ajouter 24 heures
         targetInSeconds + 86400 - nowInSeconds
     }
+
 // Retourner la durée en secondes
     return durationInSeconds.toLong()
 }
@@ -351,5 +353,4 @@ fun NotifAdd(model: MyViewModel, animal: String, activite: String){
 fun RemoveActiNotif(model: MyViewModel, animal: String, actID: Int){
     val vm = WorkManager.getInstance(context = LocalContext.current)
     vm.cancelAllWorkByTag(animal + "_" + actID)
-    Toast.makeText(LocalContext.current, "Notification supprimée", Toast.LENGTH_SHORT).show()
 }

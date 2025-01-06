@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -104,6 +105,7 @@ fun Greeting(modifier: Modifier, model: MyViewModel) {
     for (activiteAnimal in activitesAnimals) {
         if (activiteAnimal.animal == nom) {
             val activite = activites.find { it.id == activiteAnimal.id }
+//            Toast.makeText(context, "ceci : ${activite?.texte}", Toast.LENGTH_SHORT).show()
             activiteDelay.add(activiteAnimal.frequence)
             activiteTime.add(activiteAnimal.timer)
             activiteList.add(activite?.texte ?: "Inconnu")
@@ -121,6 +123,7 @@ fun Greeting(modifier: Modifier, model: MyViewModel) {
         ActiviteList(activiteList, selectActiviteColor, selectActivite, activiteDelay, activiteTime)
         TextAjoutActivite(texte)
         DelaySelection(model)
+        TimerButton(model)
         RadioButtonValide(ajouter)
         ButtonValide(model, context, texte, ajouter, nom, selectActivite,activitesAnimals, activites, model::addActiviteAnimal, model::addActivite, model::deleteActiviteAnimal, model::deleteActivite)
 
@@ -133,22 +136,8 @@ fun Greeting(modifier: Modifier, model: MyViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DelaySelection(model: MyViewModel){
-    val context = LocalContext.current
     val delays = NotifDelay.entries
     var expanded by remember { mutableStateOf(false) }
-
-    val timePickerDialog = remember {
-        TimePickerDialog(
-            context,
-            { _, hourOfDay, minute ->
-                // Format de l'heure : HH:MM
-                model.selectTime(String.format("%02d:%02d", hourOfDay, minute))
-            },
-            12, // Heure par défaut
-            0,  // Minute par défaut
-            true // Format 24h
-        )
-    }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -181,16 +170,35 @@ fun DelaySelection(model: MyViewModel){
             }
         }
     }
+}
+
+@SuppressLint("StateFlowValueCalledInComposition")
+@Composable
+fun TimerButton(model: MyViewModel){
+    val context = LocalContext.current
+    val selectedTime by model.selectedTime.collectAsState()
+
+    val timePickerDialog = remember {
+        TimePickerDialog(
+            context,
+            { _, hourOfDay, minute ->
+                // Format de l'heure : HH:MM
+                model.selectTime(String.format("%02d:%02d", hourOfDay, minute))
+            },
+            12, // Heure par défaut
+            0,  // Minute par défaut
+            true // Format 24h
+        )
+    }
     Button(
         onClick = { timePickerDialog.show() },
         modifier = Modifier.fillMaxWidth()
     ){
-        Text("Select Time : ${model.selectedTime.value}")
+        Text("Select Time : $selectedTime")
     }
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectionAnimal(nom: String, model: MyViewModel) {
 
@@ -246,9 +254,13 @@ fun ButtonValide(
     onDelActAni: (Int, String) -> Unit,
     onDelAct: (Int) -> Unit,
 ) {
-    var tmp = false;
-    var tmp2 = false;
-    var tmp4 = -1;
+    var tmp by remember { mutableStateOf(false) }
+    var tmp2 by remember { mutableStateOf(false) };
+    var tmp4 by remember { mutableIntStateOf(-1) };
+
+    val selectedTime by model.selectedTime.collectAsState()
+    val selectedDelay by model.selectedDelayType.collectAsState()
+
     Button(
         onClick = {
             when {
@@ -257,7 +269,7 @@ fun ButtonValide(
                 ajouter.value -> {
                     // Ajouter
                     onAddAct(null, text.value)
-                    onAddActAni(activites.size+1, nom, model.selectedDelayType.value, model.selectedTime.value)
+                    onAddActAni(activites.size+1, nom, selectedDelay, selectedTime)
                     tmp = true
                 }
                 !ajouter.value -> {
@@ -269,14 +281,15 @@ fun ButtonValide(
                             onDelActAni(activiteAnimal.id, nom)
                             tmp2 = true
                             tmp4 = activiteAnimal.id
-                            if (activite != null) {
-                                if(activite.id!! > 4){
-                                    onDelAct(activite.id)
-                                }
-
-                            }
+//                            if (activite != null) {
+//                                if(activite.id!! > 4){
+//                                    onDelAct(activite.id)
+//                                }
+//
+//                            }
                         }
                     }
+                    selectActivite.clear()
                 }
             }
             text.value = ""
@@ -288,11 +301,11 @@ fun ButtonValide(
         Text("Valider")
     }
     if(tmp){
+//        Toast.makeText(context, "Activité ajoutée", Toast.LENGTH_SHORT).show()
         NotifAdd(model, nom, text.value)
         tmp = false
     }
     if(tmp2){
-        Toast.makeText(context, "Activité supprimée", Toast.LENGTH_SHORT).show()
         RemoveActiNotif(model, nom, tmp4)
         tmp2 = false
     }
@@ -303,7 +316,7 @@ fun TextAjoutActivite(texte: MutableState<String>){
     OutlinedTextField(
         value = texte.value,
         onValueChange = {texte.value = it},
-        label = { Text("Ajouter une activité") },
+        label = { Text(texte.value) },
         modifier = Modifier
             .padding(8.dp)
             .height(60.dp)
@@ -323,7 +336,7 @@ fun ActiviteList(
 ) {
     LazyColumn (
         modifier = Modifier
-            .heightIn(max = 150.dp)
+            .heightIn(max = 300.dp)
             .padding(8.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
