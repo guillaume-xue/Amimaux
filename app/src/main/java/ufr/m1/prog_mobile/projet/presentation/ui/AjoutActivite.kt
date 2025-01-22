@@ -1,4 +1,4 @@
-package ufr.m1.prog_mobile.projet.ui
+package ufr.m1.prog_mobile.projet.presentation.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -51,11 +51,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import ufr.m1.prog_mobile.projet.data.Activite
-import ufr.m1.prog_mobile.projet.data.ActiviteAnimal
-import ufr.m1.prog_mobile.projet.data.Animal
+import ufr.m1.prog_mobile.projet.data.entity.Activite
+import ufr.m1.prog_mobile.projet.data.entity.ActiviteAnimal
 import ufr.m1.prog_mobile.projet.data.NotifDelay
-import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
+import ufr.m1.prog_mobile.projet.presentation.ui.theme.ProjetTheme
+import ufr.m1.prog_mobile.projet.presentation.viewmodel.MyViewModel
 
 class AjoutActivite : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

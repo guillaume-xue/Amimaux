@@ -1,4 +1,4 @@
-package ufr.m1.prog_mobile.projet.ui.theme
+package ufr.m1.prog_mobile.projet.presentation.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

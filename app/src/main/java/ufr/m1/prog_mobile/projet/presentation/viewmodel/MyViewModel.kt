@@ -1,10 +1,7 @@
-package ufr.m1.prog_mobile.projet.ui
+package ufr.m1.prog_mobile.projet.presentation.viewmodel
 
 import android.app.Application
-import android.app.TimePickerDialog
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -13,12 +10,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ufr.m1.prog_mobile.projet.R
-import ufr.m1.prog_mobile.projet.data.Activite
-import ufr.m1.prog_mobile.projet.data.ActiviteAnimal
-import ufr.m1.prog_mobile.projet.data.ActiviteAnimalBD
-import ufr.m1.prog_mobile.projet.data.ActiviteBD
-import ufr.m1.prog_mobile.projet.data.Animal
-import ufr.m1.prog_mobile.projet.data.AnimalBD
+import ufr.m1.prog_mobile.projet.data.entity.Activite
+import ufr.m1.prog_mobile.projet.data.entity.ActiviteAnimal
+import ufr.m1.prog_mobile.projet.data.database.ActiviteAnimalBD
+import ufr.m1.prog_mobile.projet.data.database.ActiviteBD
+import ufr.m1.prog_mobile.projet.data.entity.Animal
+import ufr.m1.prog_mobile.projet.data.database.AnimalBD
 import ufr.m1.prog_mobile.projet.data.NotifDelay
 
 class MyViewModel(application: Application) : AndroidViewModel(application) {

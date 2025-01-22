@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
-        android:name=".ui.MyApplication"
+        android:name=".presentation.ui.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,27 +18,27 @@
         android:theme="@style/Theme.Projet"
         tools:targetApi="31">
         <activity
-            android:name=".ui.SupprimeAnimal"
+            android:name=".presentation.ui.SupprimeAnimal"
             android:exported="false"
             android:label="@string/title_activity_supprime_animal"
             android:theme="@style/Theme.Projet" />
         <activity
-            android:name=".ui.AjoutActivite"
+            android:name=".presentation.ui.AjoutActivite"
             android:exported="false"
             android:label="@string/title_activity_ajout_activite"
             android:theme="@style/Theme.Projet" />
         <activity
-            android:name=".ui.AnimalInfoActivity"
+            android:name=".presentation.ui.AnimalInfoActivity"
             android:exported="false"
             android:label="@string/title_activity_animal_info"
             android:theme="@style/Theme.Projet" />
         <activity
-            android:name=".ui.AjoutAnimal"
+            android:name=".presentation.ui.AjoutAnimal"
             android:exported="false"
             android:label="@string/title_activity_ajout"
             android:theme="@style/Theme.Projet" />
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".presentation.ui.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Projet">

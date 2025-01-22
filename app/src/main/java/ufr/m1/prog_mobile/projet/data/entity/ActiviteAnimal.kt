@@ -1,8 +1,8 @@
-package ufr.m1.prog_mobile.projet.data
+package ufr.m1.prog_mobile.projet.data.entity
 
 import androidx.room.Entity
 import androidx.room.Index
-import androidx.room.PrimaryKey
+import ufr.m1.prog_mobile.projet.data.NotifDelay
 
 @Entity(
     primaryKeys = ["id","animal", "frequence"],

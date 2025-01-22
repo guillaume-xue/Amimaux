@@ -1,4 +1,4 @@
-package ufr.m1.prog_mobile.projet.ui
+package ufr.m1.prog_mobile.projet.presentation.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -42,17 +42,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import coil.compose.rememberAsyncImagePainter
 import ufr.m1.prog_mobile.projet.R
-import ufr.m1.prog_mobile.projet.data.Animal
+import ufr.m1.prog_mobile.projet.data.entity.Animal
 import ufr.m1.prog_mobile.projet.data.NotifDelay
-import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
+import ufr.m1.prog_mobile.projet.presentation.notification.MyWorker
+import ufr.m1.prog_mobile.projet.presentation.ui.theme.ProjetTheme
+import ufr.m1.prog_mobile.projet.presentation.viewmodel.MyViewModel
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 

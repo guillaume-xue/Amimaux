@@ -1,18 +1,11 @@
-package ufr.m1.prog_mobile.projet.ui
+package ufr.m1.prog_mobile.projet.presentation.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import androidx.core.app.NotificationCompat
-import java.util.concurrent.TimeUnit
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import java.text.SimpleDateFormat
-import java.util.Calendar
 
 class MyWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 

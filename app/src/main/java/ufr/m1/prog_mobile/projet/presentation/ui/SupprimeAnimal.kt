@@ -1,7 +1,6 @@
-package ufr.m1.prog_mobile.projet.ui
+package ufr.m1.prog_mobile.projet.presentation.ui
 
 import android.annotation.SuppressLint
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -31,10 +30,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ufr.m1.prog_mobile.projet.data.NotifDelay
-import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
+import ufr.m1.prog_mobile.projet.presentation.ui.theme.ProjetTheme
+import ufr.m1.prog_mobile.projet.presentation.viewmodel.MyViewModel
 
 class SupprimeAnimal : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

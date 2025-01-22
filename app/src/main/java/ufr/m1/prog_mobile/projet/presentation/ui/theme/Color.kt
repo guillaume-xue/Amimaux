@@ -1,4 +1,4 @@
-package ufr.m1.prog_mobile.projet.ui.theme
+package ufr.m1.prog_mobile.projet.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

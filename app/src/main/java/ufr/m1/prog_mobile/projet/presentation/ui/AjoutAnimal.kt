@@ -1,4 +1,4 @@
-package ufr.m1.prog_mobile.projet.ui
+package ufr.m1.prog_mobile.projet.presentation.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -43,10 +43,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ufr.m1.prog_mobile.projet.R
-import ufr.m1.prog_mobile.projet.ui.theme.ProjetTheme
+import ufr.m1.prog_mobile.projet.presentation.ui.theme.ProjetTheme
 import coil.compose.rememberImagePainter
 import ufr.m1.prog_mobile.projet.data.NotifDelay
-import kotlin.reflect.KFunction4
+import ufr.m1.prog_mobile.projet.presentation.viewmodel.MyViewModel
 
 class AjoutAnimal : ComponentActivity() {
     var selectedImageUri: Uri? = null
