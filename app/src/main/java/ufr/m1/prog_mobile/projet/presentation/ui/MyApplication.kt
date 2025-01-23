@@ -22,10 +22,10 @@ class MyApplication : Application() {
         // Vérifier si c'est la première exécution
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val isFirstRun = prefs.getBoolean(IS_FIRST_RUN, true)
-        viewModel.initializeData()
+
         if (isFirstRun) {
             // Initialiser la base de données avec les données XML
-
+            viewModel.initializeData()
 
             // Marquer que ce n'est plus la première exécution
             prefs.edit().putBoolean(IS_FIRST_RUN, false).apply()
