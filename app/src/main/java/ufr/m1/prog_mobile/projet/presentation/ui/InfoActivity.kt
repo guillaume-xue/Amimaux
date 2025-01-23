@@ -41,9 +41,13 @@ class AnimalInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        
+        // Initialiser les données avant la composition
+        val app = application as MyApplication
+        val model = app.infoViewModel
+        model.initializeData(this)
+        
         setContent {
-            val app = application as MyApplication
-            val model = app.infoViewModel
             ProjetTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize()){ innerPadding ->
@@ -56,7 +60,6 @@ class AnimalInfoActivity : ComponentActivity() {
 
 @Composable
 fun MonAnimalInfo(modifier: Modifier, model: InfoViewModel) {
-    model.initializeData(LocalContext.current)
     Column (
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -110,40 +113,39 @@ fun ActiviteList(modifier: Modifier, model: InfoViewModel) {
                 .padding(32.dp)
         ){
             itemsIndexed(model.listActivity.value) { index, item ->
-                Text(index.toString())
-//                Row (
-//                    modifier = modifier.fillMaxWidth(),
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.SpaceBetween
-//                ){
-//                    Text(
-//                        item.texte,
-//                        modifier = modifier
-//                            .padding(2.dp)
-//                            .fillMaxWidth(),
-//                        fontSize = 15.sp,
-//                        fontWeight = FontWeight.Bold
-//                    )
-//                    Text(
-//                        model.listActiviteAnimal.value[index].frequence.toString(),
-//                        modifier = modifier
-//                            .padding(2.dp)
-//                            .fillMaxWidth()
-//                            .wrapContentWidth(Alignment.CenterHorizontally),
-//                        fontSize = 15.sp,
-//                        fontWeight = FontWeight.Bold
-//                    )
-//
-//                    Text(
-//                        model.listActiviteAnimal.value[index].time,
-//                        modifier = modifier
-//                            .padding(2.dp)
-//                            .fillMaxWidth()
-//                            .wrapContentWidth(Alignment.End),
-//                        fontSize = 15.sp,
-//                        fontWeight = FontWeight.Bold
-//                    )
-//                }
+                Row (
+                    modifier = modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ){
+                    Text(
+                        item.texte,
+                        modifier = modifier
+                            .padding(2.dp)
+                            .fillMaxWidth(),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        model.listActiviteAnimal.value[index].frequence.toString(),
+                        modifier = modifier
+                            .padding(2.dp)
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.CenterHorizontally),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        model.listActiviteAnimal.value[index].time,
+                        modifier = modifier
+                            .padding(2.dp)
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.End),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

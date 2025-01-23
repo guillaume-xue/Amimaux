@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ufr.m1.prog_mobile.projet.data.database.ActiviteBD
 import ufr.m1.prog_mobile.projet.data.database.ActivityAnimalBD
 import ufr.m1.prog_mobile.projet.data.database.AnimalBD
@@ -26,28 +27,35 @@ class InfoViewModel(application: Application) : AndroidViewModel(application) {
     private val activityDao by lazy { ActiviteBD.getDB(application).ActiviteDao() }
     val listActivity = mutableStateOf(listOf<Activite>())
 
-    // Fonctions pour la base de données
-
     fun initializeData(context: Context) {
+        // Nettoyer les variables sur le thread principal
+        viewModelScope.launch(Dispatchers.Main) {
+            currentAnimal.value = Animal(0, "", "", "photo")
+            listActiviteAnimal.value = listOf()
+            listActivity.value = listOf()
 
-        val intent = (context as Activity).intent
-        val id = intent.getStringExtra("id")!!.toInt()
-        val list = listActivity.value.toMutableList()
-        viewModelScope.launch(Dispatchers.IO) {
-            currentAnimal.value = animalDao.getAnimalById(id)
-            listActiviteAnimal.value = activiteAnimalDao.getActiviteAnimalById(animalId = id)
-        }
-        for (activiteAnimal in listActiviteAnimal.value) {
-            viewModelScope.launch(Dispatchers.IO) {
-                list.add(activityDao.getActiviteById(activiteAnimal.activityId))
+            // Récupérer l'ID depuis l'intent
+            val intent = (context as Activity).intent
+            val id = intent.getStringExtra("id")!!.toInt()
+
+            // Charger les nouvelles données
+            withContext(Dispatchers.IO) {
+                val animal = animalDao.getAnimalById(id)
+                val activitesAnimal = activiteAnimalDao.getActiviteAnimalById(animalId = id)
+                val activities = mutableListOf<Activite>()
+                
+                for (activiteAnimal in activitesAnimal) {
+                    val activite = activityDao.getActiviteById(activiteAnimal.activityId)
+                    activities.add(activite)
+                }
+
+                // Mettre à jour les états sur le thread principal
+                withContext(Dispatchers.Main) {
+                    currentAnimal.value = animal
+                    listActiviteAnimal.value = activitesAnimal
+                    listActivity.value = activities
+                }
             }
         }
-        listActivity.value = list
-    }
-
-    init {
-        currentAnimal.value = Animal(0, "", "", "photo")
-        listActiviteAnimal.value = listOf()
-        listActivity.value = listOf()
     }
 }
