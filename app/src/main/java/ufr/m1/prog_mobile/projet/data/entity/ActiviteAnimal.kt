@@ -5,13 +5,12 @@ import androidx.room.Index
 import ufr.m1.prog_mobile.projet.data.NotifDelay
 
 @Entity(
-    primaryKeys = ["id","animal", "frequence"],
-    indices = [Index(value = ["id","animal"])]
+    primaryKeys = ["activityId","animalId"],
+    indices = [Index(value = ["activityId","animalId","frequence","time"])]
 )
 data class ActiviteAnimal(
-    val id: Int,
-    val animal: String,
+    val activityId: Int,
+    val animalId: Int,
     val frequence: NotifDelay,
-    val timer : String
-
+    val time : String
 )

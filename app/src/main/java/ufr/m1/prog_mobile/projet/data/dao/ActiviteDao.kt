@@ -19,8 +19,8 @@ interface ActiviteDao{
     @Query("SELECT * FROM Activite")
     fun getActivites(): Flow<List<Activite>>
 
-    @Query("SELECT * FROM Activite WHERE id LIKE :pref || '%'")
-    fun getActivitesPref(pref: String): Flow<List<Activite>>
+    @Query("SELECT * FROM Activite WHERE id = :id")
+    fun getActiviteById(id: Int): Activite
 
     @Query("DELETE FROM Activite")
     suspend fun clearAllActivites()

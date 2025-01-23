@@ -19,15 +19,10 @@ interface ActiviteAnimalDao {
     @Query("SELECT * FROM ActiviteAnimal")
     fun getActiviteAnimals(): Flow<List<ActiviteAnimal>>
 
-    @Query("SELECT * FROM ActiviteAnimal WHERE id LIKE :pref || '%'")
-    fun getActiviteAnimalsPref(pref: String): Flow<List<ActiviteAnimal>>
+    @Query("SELECT * FROM ActiviteAnimal WHERE animalId = :animalId")
+    fun getActiviteAnimalById(animalId: Int): List<ActiviteAnimal>
 
     @Query("DELETE FROM ActiviteAnimal")
     suspend fun clearAllActiviteAnimals()
 
-    @Query("DELETE FROM ActiviteAnimal WHERE id = :id AND animal = :animal")
-    suspend fun deleteActiviteAnimal(id: Int, animal: String)
-
-    @Query("DELETE FROM ActiviteAnimal WHERE animal = :animal")
-    suspend fun deleteActiviteAnimalByAnimal(animal: String)
 }

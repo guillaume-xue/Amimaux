@@ -6,8 +6,9 @@ import androidx.room.PrimaryKey
 
 @Entity(indices = [Index(value = ["nom", "espece", "photo"], unique = true)])
 data class Animal(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val id : Int? = null,
     val nom: String,
     val espece: String,
-    val photo: String? = null
+    val photo: String
 )

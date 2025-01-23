@@ -21,6 +21,9 @@ interface AnimalDao {
     @Query("SELECT * FROM Animal WHERE nom LIKE :pref || '%'")
     fun getAnimalsPref(pref: String): Flow<List<Animal>>
 
+    @Query("SELECT * FROM Animal WHERE id = :id")
+    fun getAnimalById(id: Int): Animal
+
     @Query("DELETE FROM Animal")
     suspend fun clearAllAnimals()
 

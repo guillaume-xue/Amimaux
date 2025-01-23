@@ -1,97 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="animals">
-        <item>cat</item>
+    <string-array name="noms_animaux">
+        <item>Cat</item>
+        <item>Dog</item>
+        <item>Hamster</item>
+        <item>Fish</item>
+    </string-array>
+
+    <string-array name="especes_animaux">
+        <item>Chat</item>
+        <item>Chien</item>
+        <item>Hamster</item>
+        <item>Poisson</item>
+    </string-array>
+
+    <string-array name="photos_animaux">
         <item>chat</item>
-        <item>chat</item>
-        <item>dog</item>
-        <item>chien</item>
         <item>chien</item>
         <item>hamster</item>
-        <item>hamster</item>
-        <item>hamster</item>
-        <item>fish</item>
-        <item>poisson</item>
         <item>poisson</item>
     </string-array>
 
-    <string-array name="activites_animals">
+    <string-array name="activiteID">
         <item>1</item>
-        <item>cat</item>
-        <item>quotidien</item>
-        <item>12:00</item>
-        <item>1</item>
-        <item>dog</item>
-        <item>quotidien</item>
-        <item>12:00</item>
-        <item>1</item>
-        <item>hamster</item>
-        <item>quotidien</item>
-        <item>12:00</item>
-        <item>1</item>
-        <item>fish</item>
-        <item>quotidien</item>
-        <item>12:00</item>
         <item>2</item>
-        <item>cat</item>
-        <item>unique</item>
-        <item>14:00</item>
-        <item>2</item>
-        <item>dog</item>
-        <item>unique</item>
-        <item>14:00</item>
-        <item>2</item>
-        <item>hamster</item>
-        <item>unique</item>
-        <item>14:00</item>
-        <item>2</item>
-        <item>fish</item>
-        <item>unique</item>
-        <item>14:00</item>
         <item>3</item>
-        <item>cat</item>
-        <item>hebdomadaire</item>
-        <item>16:00</item>
-        <item>3</item>
-        <item>dog</item>
-        <item>hebdomadaire</item>
-        <item>16:00</item>
-        <item>3</item>
-        <item>hamster</item>
-        <item>hebdomadaire</item>
-        <item>16:00</item>
-        <item>3</item>
-        <item>fish</item>
-        <item>hebdomadaire</item>
-        <item>16:00</item>
         <item>4</item>
-        <item>cat</item>
-        <item>hebdomadaire</item>
-        <item>18:00</item>
-        <item>4</item>
-        <item>dog</item>
-        <item>hebdomadaire</item>
-        <item>18:00</item>
-        <item>4</item>
-        <item>hamster</item>
-        <item>hebdomadaire</item>
-        <item>18:00</item>
-        <item>4</item>
-        <item>fish</item>
-        <item>hebdomadaire</item>
-        <item>18:00</item>
     </string-array>
 
     <string-array name="activites">
-        <item>1</item>
         <item>Donner à manger</item>
-        <item>2</item>
         <item>aller au coiffeur</item>
-        <item>3</item>
         <item>aller au vétérinaire</item>
-        <item>4</item>
         <item>promenade</item>
+    </string-array>
+    
+    <string-array name="activityID">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+    
+    <string-array name="animalID">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>1</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="frequences">
+        <item>Hebdomadaire</item>
+        <item>Quotidien</item>
+        <item>Unique</item>
+        <item>Hebdomadaire</item>
+        <item>Quotidien</item>
+        <item>Unique</item>
+    </string-array>
+    
+    <string-array name="times">
+        <item>10:00</item>
+        <item>12:00</item>
+        <item>14:00</item>
+        <item>16:00</item>
+        <item>18:00</item>
+        <item>20:00</item>
     </string-array>
 
 </resources>

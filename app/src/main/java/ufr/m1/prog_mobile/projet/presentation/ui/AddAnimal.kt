@@ -1,14 +1,10 @@
 package ufr.m1.prog_mobile.projet.presentation.ui
 
-import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,75 +40,47 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ufr.m1.prog_mobile.projet.R
 import ufr.m1.prog_mobile.projet.presentation.ui.theme.ProjetTheme
-import coil.compose.rememberImagePainter
-import ufr.m1.prog_mobile.projet.data.NotifDelay
-import ufr.m1.prog_mobile.projet.presentation.viewmodel.MyViewModel
+import ufr.m1.prog_mobile.projet.presentation.viewmodel.AddAniViewModel
 
-class AjoutAnimal : ComponentActivity() {
-    var selectedImageUri: Uri? = null
-
-    private val getImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            selectedImageUri = result.data?.data
-            // Handle the selected image URI (e.g., display it in an Image composable)
-        } else {
-            Toast.makeText(this, "Image selection failed", Toast.LENGTH_SHORT).show()
-        }
-    }
+class AddAnimal : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val app = application as MyApplication
-            val model = app.viewModel
+            val model = app.addAniViewModel
+            model.initializeData()
             ProjetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MonAjout(modifier = Modifier.padding(innerPadding), model)
+                    MonAjout(modifier = Modifier.padding(innerPadding), model = model)
                 }
             }
         }
     }
 
-    fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        getImage.launch(intent)
-    }
 }
 
 @Composable
-fun MonAjout(modifier: Modifier, model: MyViewModel){
-    MonAjoutPreview(model)
-}
-
-@Composable
-fun MonAjoutPreview(model: MyViewModel) {
-
+fun MonAjout(modifier: Modifier, model: AddAniViewModel) {
     Column (
-        modifier = Modifier
+        modifier = modifier
             .padding(16.dp)
             .fillMaxHeight(),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         BackButton()
-        EntreText(onAddAnimal = model::addAnimal, onAddActiviteAnimal = model::addActiviteAnimal)
+        EntreText(model = model)
         Box (
             modifier = Modifier.padding(8.dp)
         )
     }
 }
 
-
 @Composable
-fun EntreText(
-    onAddAnimal: (String, String, String?) -> Unit,
-    onAddActiviteAnimal: (Int, String, NotifDelay, String) -> Unit){
+fun EntreText(model: AddAniViewModel){
     val context = LocalContext.current
-    var nom by remember { mutableStateOf("") }
-    var espece by remember { mutableStateOf("") }
-    val activity = context as AjoutAnimal
     Column (
         modifier = Modifier
             .fillMaxWidth(),
@@ -121,38 +89,30 @@ fun EntreText(
     ){
 
         IconButton(
-            onClick = { activity.openGallery() },
+            onClick = { },
             modifier = Modifier
                 .padding(50.dp)
                 .size(100.dp)
                 .clip(RoundedCornerShape(50))
                 .background(Color(0xFFB0B0B0))
         ) {
-            if (activity.selectedImageUri != null) {
-                Image(
-                    painter = rememberImagePainter(activity.selectedImageUri),
-                    contentDescription = "Selected Image",
-                    modifier = Modifier.size(50.dp)
-                )
-            } else {
-                Image(
-                    painter = painterResource(id = R.drawable.photo),
-                    contentDescription = "Ajouter",
-                    modifier = Modifier.size(50.dp)
-                )
-            }
+            Image(
+                painter = painterResource(id = R.drawable.photo),
+                contentDescription = "Ajouter",
+                modifier = Modifier.size(50.dp)
+            )
         }
         TextField(
-            value = nom,
-            onValueChange = {nom = it},
+            value = model.nom.value,
+            onValueChange = {model.nom.value = it},
             label = { Text("Nom") },
             modifier = Modifier
                 .padding(16.dp)
                 .height(50.dp)
         )
         TextField(
-            value = espece,
-            onValueChange = {espece = it},
+            value = model.espece.value,
+            onValueChange = {model.espece.value = it},
             label = { Text("Espèce") },
             modifier = Modifier
                 .padding(16.dp)
@@ -160,24 +120,7 @@ fun EntreText(
         )
         Button(
             onClick = {
-                if (nom.isEmpty() || espece.isEmpty()) {
-                    Toast.makeText(
-                        context,
-                        "Les champs ne peuvent pas être vides",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    if (activity.selectedImageUri != null) {
-                        onAddAnimal(nom, espece, activity.selectedImageUri.toString())
-                    }else{
-                        onAddAnimal(nom, espece, "")
-                    }
-
-                    onAddActiviteAnimal(1, nom, NotifDelay.Quotidien, "12:00")
-                    when (espece) {
-                        "chien" -> onAddActiviteAnimal(4, nom, NotifDelay.Quotidien, "12:00")
-                    }
-                }
+                model.addAnimal(context)
             },
             modifier = Modifier
                 .padding(64.dp)

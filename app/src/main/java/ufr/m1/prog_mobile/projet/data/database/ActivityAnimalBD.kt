@@ -8,16 +8,16 @@ import ufr.m1.prog_mobile.projet.data.dao.ActiviteAnimalDao
 import ufr.m1.prog_mobile.projet.data.entity.ActiviteAnimal
 
 @Database(entities = [ActiviteAnimal::class], version = 2)
-abstract class ActiviteAnimalBD : RoomDatabase() {
+abstract class ActivityAnimalBD : RoomDatabase() {
     abstract fun ActiviteAnimalDao(): ActiviteAnimalDao
 
     companion object {
         @Volatile
-        private var instance: ActiviteAnimalBD? = null
+        private var instance: ActivityAnimalBD? = null
 
-        fun getDB(c: Context): ActiviteAnimalBD {
+        fun getDB(c: Context): ActivityAnimalBD {
             if (instance != null) return instance!!
-            instance = Room.databaseBuilder(c.applicationContext, ActiviteAnimalBD::class.java, "activites_animals")
+            instance = Room.databaseBuilder(c.applicationContext, ActivityAnimalBD::class.java, "activites_animals")
                 .fallbackToDestructiveMigration().build()
             return instance!!
         }

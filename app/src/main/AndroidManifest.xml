@@ -33,7 +33,7 @@
             android:label="@string/title_activity_animal_info"
             android:theme="@style/Theme.Projet" />
         <activity
-            android:name=".presentation.ui.AjoutAnimal"
+            android:name=".presentation.ui.AddAnimal"
             android:exported="false"
             android:label="@string/title_activity_ajout"
             android:theme="@style/Theme.Projet" />
