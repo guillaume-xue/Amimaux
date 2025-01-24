@@ -49,8 +49,8 @@ class MainActivity : ComponentActivity() {
             val app = application as MyApplication
             val model = app.viewModel
             ProjetTheme {
-                Scaffold(modifier = Modifier.fillMaxSize(), topBar = { MonTopBar() }) { innerPadding ->
-                    MonMenu(modifier = Modifier.padding(innerPadding), model = model)
+                Scaffold(modifier = Modifier.fillMaxSize(), topBar = { MyTopBar() }) { innerPadding ->
+                    MyMenuScreen(modifier = Modifier.padding(innerPadding), model = model)
                 }
             }
         }
@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MonMenu(modifier: Modifier, model: MainViewModel) {
+fun MyMenuScreen(modifier: Modifier, model: MainViewModel) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -73,7 +73,7 @@ fun MonMenu(modifier: Modifier, model: MainViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MonTopBar() = TopAppBar(
+fun MyTopBar() = TopAppBar(
     title = {
         Column (
             verticalArrangement = Arrangement.Center,

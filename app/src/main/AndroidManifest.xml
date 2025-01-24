@@ -23,7 +23,7 @@
             android:label="@string/title_activity_supprime_animal"
             android:theme="@style/Theme.Projet" />
         <activity
-            android:name=".presentation.ui.AjoutActivite"
+            android:name=".presentation.ui.AddActivity"
             android:exported="false"
             android:label="@string/title_activity_ajout_activite"
             android:theme="@style/Theme.Projet" />

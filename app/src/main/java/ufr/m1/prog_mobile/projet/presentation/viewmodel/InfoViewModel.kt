@@ -3,6 +3,7 @@ package ufr.m1.prog_mobile.projet.presentation.viewmodel
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +16,7 @@ import ufr.m1.prog_mobile.projet.data.database.AnimalBD
 import ufr.m1.prog_mobile.projet.data.entity.Activite
 import ufr.m1.prog_mobile.projet.data.entity.ActiviteAnimal
 import ufr.m1.prog_mobile.projet.data.entity.Animal
+import ufr.m1.prog_mobile.projet.presentation.ui.AddActivity
 
 class InfoViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -57,5 +59,11 @@ class InfoViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
         }
+    }
+
+    fun onButtonAddAct(context: Context) {
+        val intent = Intent(context, AddActivity::class.java)
+        intent.putExtra("id", currentAnimal.value.id.toString())
+        context.startActivity(intent)
     }
 }

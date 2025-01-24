@@ -2,6 +2,7 @@ package ufr.m1.prog_mobile.projet.presentation.ui
 
 import android.app.Application
 import android.content.Context
+import ufr.m1.prog_mobile.projet.presentation.viewmodel.AddActViewModel
 import ufr.m1.prog_mobile.projet.presentation.viewmodel.AddAniViewModel
 import ufr.m1.prog_mobile.projet.presentation.viewmodel.InfoViewModel
 import ufr.m1.prog_mobile.projet.presentation.viewmodel.MainViewModel
@@ -10,6 +11,7 @@ class MyApplication : Application() {
     lateinit var viewModel: MainViewModel
     lateinit var infoViewModel: InfoViewModel
     lateinit var addAniViewModel: AddAniViewModel
+    lateinit var addActViewModel: AddActViewModel
     private val PREFS_NAME = "AppPrefs"
     private val IS_FIRST_RUN = "isFirstRun"
 
@@ -18,6 +20,7 @@ class MyApplication : Application() {
         viewModel = MainViewModel(this)
         infoViewModel = InfoViewModel(this)
         addAniViewModel = AddAniViewModel(this)
+        addActViewModel = AddActViewModel(this)
         
         // Vérifier si c'est la première exécution
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

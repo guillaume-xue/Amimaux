@@ -1,7 +1,5 @@
 package ufr.m1.prog_mobile.projet.presentation.ui
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,7 +48,7 @@ class AnimalInfoActivity : ComponentActivity() {
             ProjetTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize()){ innerPadding ->
-                    MonAnimalInfo(modifier = Modifier.padding(innerPadding), model = model)
+                    MyAniInfoScreen(modifier = Modifier.padding(innerPadding), model = model)
                 }
             }
         }
@@ -59,17 +56,18 @@ class AnimalInfoActivity : ComponentActivity() {
 }
 
 @Composable
-fun MonAnimalInfo(modifier: Modifier, model: InfoViewModel) {
+fun MyAniInfoScreen(modifier: Modifier, model: InfoViewModel) {
     Column (
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxSize()
     ){
-        BackButton()
+        BackToMenuButton()
         AnimalImage(model)
         AnimalInfo(modifier, model)
-        ActiviteList(modifier = Modifier.weight(1f), model = model)
+        ActivityList(modifier = Modifier.weight(1f), model = model)
+        ButtonAddAct(modifier = Modifier, model)
     }
 }
 
@@ -101,7 +99,7 @@ fun AnimalInfo(modifier: Modifier, model: InfoViewModel) {
 }
 
 @Composable
-fun ActiviteList(modifier: Modifier, model: InfoViewModel) {
+fun ActivityList(modifier: Modifier, model: InfoViewModel) {
     Column (
         modifier = modifier.verticalScroll(rememberScrollState())
     ){
@@ -152,16 +150,14 @@ fun ActiviteList(modifier: Modifier, model: InfoViewModel) {
 }
 
 @Composable
-fun ButtonAjoutActi(
+fun ButtonAddAct(
     modifier: Modifier,
-    context: Activity,
-    nom: String
+    model: InfoViewModel
 ) {
+    val context = LocalContext.current
     Button(
         onClick = {
-            val iii = Intent(context, AjoutActivite::class.java)
-            iii.putExtra("animal", nom)
-            context.startActivity(iii)
+            model.onButtonAddAct(context)
         },
         modifier = modifier
             .padding(8.dp)

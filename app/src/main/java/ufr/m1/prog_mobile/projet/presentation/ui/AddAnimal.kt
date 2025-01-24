@@ -1,6 +1,5 @@
 package ufr.m1.prog_mobile.projet.presentation.ui
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,19 +16,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +44,7 @@ class AddAnimal : ComponentActivity() {
             model.initializeData()
             ProjetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MonAjout(modifier = Modifier.padding(innerPadding), model = model)
+                    MyAddScreen(modifier = Modifier.padding(innerPadding), model = model)
                 }
             }
         }
@@ -62,7 +53,7 @@ class AddAnimal : ComponentActivity() {
 }
 
 @Composable
-fun MonAjout(modifier: Modifier, model: AddAniViewModel) {
+fun MyAddScreen(modifier: Modifier, model: AddAniViewModel) {
     Column (
         modifier = modifier
             .padding(16.dp)
@@ -70,8 +61,8 @@ fun MonAjout(modifier: Modifier, model: AddAniViewModel) {
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        BackButton()
-        EntreText(model = model)
+        BackToMenuButton()
+        EnterText(model = model)
         Box (
             modifier = Modifier.padding(8.dp)
         )
@@ -79,7 +70,7 @@ fun MonAjout(modifier: Modifier, model: AddAniViewModel) {
 }
 
 @Composable
-fun EntreText(model: AddAniViewModel){
+fun EnterText(model: AddAniViewModel){
     val context = LocalContext.current
     Column (
         modifier = Modifier
@@ -130,31 +121,6 @@ fun EntreText(model: AddAniViewModel){
         }
     }
 
-}
-
-@Composable
-fun BackButton(){
-    val context = LocalContext.current
-    Row (
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
-    ){
-        IconButton(
-            onClick = {
-                val iii = Intent(context, MainActivity::class.java)
-                context.startActivity(iii)
-            },
-        ) {
-            Icon(
-                Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "Back",
-                tint = Color(0xFF000000)
-            )
-        }
-        Box (
-            modifier = Modifier.padding(8.dp)
-        )
-    }
 }
 
 
