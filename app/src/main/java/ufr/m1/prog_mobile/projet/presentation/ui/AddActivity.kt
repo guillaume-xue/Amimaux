@@ -63,6 +63,7 @@ class AddActivity : ComponentActivity() {
         setContent {
             val app = application as MyApplication
             val model = app.addActViewModel
+            model.initializeData(this)
             ProjetTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize()){
